@@ -1,0 +1,401 @@
+{
+  "version": "1.0.0",
+  "supportedLanguages": ["en", "ru", "tr"],
+  "restaurants": [
+    {
+      "id": "breakfast_place",
+      "name": "Breakfast Palace",
+      "displayName": {
+        "en": "Breakfast Palace",
+        "ru": "Дворец Завтраков",
+        "tr": "Kahvaltı Sarayı"
+      },
+      "description": {
+        "en": "The finest breakfast experience in the city",
+        "ru": "Лучший завтрак в городе",
+        "tr": "Şehirdeki en iyi kahvaltı deneyimi"
+      },
+      "image": "/images/restaurants/breakfast_palace.jpg",
+      "address": "123 Morning Street, Breakfast City",
+      "phone": "+1 (555) 123-4567",
+      "email": "hello@breakfastpalace.com",
+      "website": "https://breakfastpalace.com",
+      "cuisineTypes": ["Turkish", "Mediterranean", "International"],
+      "settings": {
+        "currency": "USD",
+        "defaultLanguage": "en"
+      },
+      "allergens": [
+        {
+          "id": "gluten",
+          "name": "Gluten",
+          "icon": "🌾"
+        },
+        {
+          "id": "dairy",
+          "name": "Dairy",
+          "icon": "🥛"
+        },
+        {
+          "id": "nuts",
+          "name": "Tree Nuts",
+          "icon": "🌰"
+        },
+        {
+          "id": "eggs",
+          "name": "Eggs",
+          "icon": "🥚"
+        },
+        {
+          "id": "peanuts",
+          "name": "Peanuts",
+          "icon": "🥜"
+        },
+        {
+          "id": "soy",
+          "name": "Soy",
+          "icon": "🫘"
+        }
+      ],
+      "categories": [
+        {
+          "id": "turkish_breakfast",
+          "name": "Turkish Breakfast",
+          "displayName": {
+            "en": "Turkish Breakfast",
+            "ru": "Турецкий Завтрак",
+            "tr": "Türk Kahvaltısı"
+          },
+          "icon": "🥘",
+          "items": [
+            {
+              "id": "item_menemen",
+              "name": "Menemen",
+              "description": {
+                "en": "Traditional Turkish scrambled eggs with tomatoes, peppers and onions",
+                "ru": "Традиционная турецкая яичница с помидорами, перцем и луком",
+                "tr": "Domates, biber ve soğanla pişirilmiş geleneksel Türk yumurtası"
+              },
+              "price": 8.99,
+              "image": "/images/dishes/menemen.jpg",
+              "available": true,
+              "vegetarian": false,
+              "spicy": 2,
+              "portion": "350g",
+              "allergens": ["eggs"],
+              "calories": 280
+            },
+            {
+              "id": "item_borek",
+              "name": "Cheese Borek",
+              "description": {
+                "en": "Crispy pastry filled with white cheese and herbs",
+                "ru": "Хрустящее пирожное с белым сыром и травами",
+                "tr": "Beyaz peynir ve otlarla doldurulmuş gevrek bir hamur"
+              },
+              "price": 7.99,
+              "image": "/images/dishes/cheese_borek.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "200g",
+              "allergens": ["gluten", "dairy"],
+              "calories": 320
+            },
+            {
+              "id": "item_sucuk",
+              "name": "Sucuk & Cheese Plate",
+              "description": {
+                "en": "Turkish spicy sausage with assorted cheeses and olives",
+                "ru": "Турецкая пряная колбаса с ассортиментом сыров и оливок",
+                "tr": "Türk baharatlandırılmış sosis ve çeşitli peynirler ve zeytinler"
+              },
+              "price": 10.99,
+              "image": "/images/dishes/sucuk_cheese.jpg",
+              "available": true,
+              "vegetarian": false,
+              "spicy": 3,
+              "portion": "300g",
+              "allergens": ["dairy"],
+              "calories": 420
+            },
+            {
+              "id": "item_muhammara",
+              "name": "Muhammara",
+              "description": {
+                "en": "Roasted red pepper and walnut dip, served with bread",
+                "ru": "Паста из жареного красного перца и грецких орехов",
+                "tr": "Kızarmış kırmızı biber ve ceviz dip"
+              },
+              "price": 6.99,
+              "image": "/images/dishes/muhammara.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 1,
+              "portion": "150g",
+              "allergens": ["nuts", "gluten"],
+              "calories": 180
+            }
+          ]
+        },
+        {
+          "id": "eggs",
+          "name": "Eggs",
+          "displayName": {
+            "en": "Eggs",
+            "ru": "Яйца",
+            "tr": "Yumurtalar"
+          },
+          "icon": "🥚",
+          "items": [
+            {
+              "id": "item_scrambled",
+              "name": "Scrambled Eggs",
+              "description": {
+                "en": "Fluffy scrambled eggs with butter and toast",
+                "ru": "Пушистая яичница со сливочным маслом и тостами",
+                "tr": "Tereyağ ve tost ile huni doldurulmuş yumurta"
+              },
+              "price": 5.99,
+              "image": "/images/dishes/scrambled_eggs.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "2 eggs",
+              "allergens": ["eggs", "dairy", "gluten"],
+              "calories": 280
+            },
+            {
+              "id": "item_fried",
+              "name": "Fried Eggs",
+              "description": {
+                "en": "Sunny-side up or over-easy fried eggs with toast",
+                "ru": "Глазунья с тостами",
+                "tr": "Kızarmış yumurta ve tost"
+              },
+              "price": 5.99,
+              "image": "/images/dishes/fried_eggs.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "2 eggs",
+              "allergens": ["eggs", "dairy", "gluten"],
+              "calories": 290
+            },
+            {
+              "id": "item_omelette",
+              "name": "Vegetable Omelette",
+              "description": {
+                "en": "Three-egg omelette filled with mushrooms, bell peppers and onions",
+                "ru": "Омлет с грибами, болгарским перцем и луком",
+                "tr": "Mantar, biber ve soğanla doldurulmuş yumurta omleti"
+              },
+              "price": 8.99,
+              "image": "/images/dishes/vegetable_omelette.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 1,
+              "portion": "3 eggs",
+              "allergens": ["eggs", "dairy"],
+              "calories": 320
+            },
+            {
+              "id": "item_spanish_omelette",
+              "name": "Spanish Omelette",
+              "description": {
+                "en": "Thick omelette with potatoes, onions and peppers",
+                "ru": "Толстый омлет с картофелем, луком и перцем",
+                "tr": "Patates, soğan ve biber ile kalın omlet"
+              },
+              "price": 9.99,
+              "image": "/images/dishes/spanish_omelette.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "large",
+              "allergens": ["eggs", "dairy"],
+              "calories": 380
+            }
+          ]
+        },
+        {
+          "id": "pancakes",
+          "name": "Pancakes",
+          "displayName": {
+            "en": "Pancakes",
+            "ru": "Блины",
+            "tr": "Krep"
+          },
+          "icon": "🥞",
+          "items": [
+            {
+              "id": "item_classic_pancakes",
+              "name": "Classic Pancakes",
+              "description": {
+                "en": "Stack of fluffy pancakes with maple syrup and butter",
+                "ru": "Стопка пушистых блинов с кленовым сиропом и сливочным маслом",
+                "tr": "Akçaağaç şurubu ve tereyağ ile yığılmış yumuşak krep"
+              },
+              "price": 9.99,
+              "image": "/images/dishes/classic_pancakes.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "4 pancakes",
+              "allergens": ["gluten", "dairy", "eggs"],
+              "calories": 420
+            },
+            {
+              "id": "item_berry_pancakes",
+              "name": "Berry Pancakes",
+              "description": {
+                "en": "Fluffy pancakes topped with fresh berries, whipped cream and syrup",
+                "ru": "Блины с ягодами, взбитыми сливками и сиропом",
+                "tr": "Taze meyveler, kremalı krem ve şurup ile tabakalar krep"
+              },
+              "price": 11.99,
+              "image": "/images/dishes/berry_pancakes.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "4 pancakes",
+              "allergens": ["gluten", "dairy", "eggs"],
+              "calories": 480
+            },
+            {
+              "id": "item_nutella_pancakes",
+              "name": "Nutella Pancakes",
+              "description": {
+                "en": "Pancakes with Nutella spread, bananas and whipped cream",
+                "ru": "Блины с Nutella, бананами и взбитыми сливками",
+                "tr": "Nutella, muz ve krem ile krep"
+              },
+              "price": 12.99,
+              "image": "/images/dishes/nutella_pancakes.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "4 pancakes",
+              "allergens": ["gluten", "dairy", "eggs", "nuts", "peanuts"],
+              "calories": 520
+            },
+            {
+              "id": "item_chocolate_pancakes",
+              "name": "Chocolate Chip Pancakes",
+              "description": {
+                "en": "Pancakes loaded with chocolate chips and served with chocolate sauce",
+                "ru": "Блины с шоколадной стружкой и шоколадным соусом",
+                "tr": "Çikolata parçaları ve çikolata sos ile krep"
+              },
+              "price": 10.99,
+              "image": "/images/dishes/chocolate_pancakes.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "4 pancakes",
+              "allergens": ["gluten", "dairy", "eggs"],
+              "calories": 450
+            }
+          ]
+        },
+        {
+          "id": "waffles",
+          "name": "Waffles",
+          "displayName": {
+            "en": "Waffles",
+            "ru": "Вафли",
+            "tr": "Waffle"
+          },
+          "icon": "🧇",
+          "items": [
+            {
+              "id": "item_classic_waffle",
+              "name": "Classic Waffle",
+              "description": {
+                "en": "Crispy Belgian waffle with maple syrup and whipped cream",
+                "ru": "Хрустящая бельгийская вафля с кленовым сиропом и взбитыми сливками",
+                "tr": "Akçaağaç şurubu ve krem ile gevrek Belçika waffles"
+              },
+              "price": 9.99,
+              "image": "/images/dishes/classic_waffle.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "1 waffle",
+              "allergens": ["gluten", "dairy", "eggs"],
+              "calories": 380
+            },
+            {
+              "id": "item_strawberry_waffle",
+              "name": "Strawberry Waffle",
+              "description": {
+                "en": "Waffle topped with fresh strawberries, cream and chocolate drizzle",
+                "ru": "Вафля с клубникой, сливками и шоколадной крошкой",
+                "tr": "Taze çilek, krem ve çikolata ile waffle"
+              },
+              "price": 11.99,
+              "image": "/images/dishes/strawberry_waffle.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "1 waffle",
+              "allergens": ["gluten", "dairy", "eggs"],
+              "calories": 420
+            },
+            {
+              "id": "item_ice_cream_waffle",
+              "name": "Ice Cream Waffle",
+              "description": {
+                "en": "Crispy waffle topped with vanilla ice cream and choice of sauce",
+                "ru": "Вафля с ванильным мороженым и соусом по выбору",
+                "tr": "Vanilya dondurması ve sos seçimi ile waffle"
+              },
+              "price": 10.99,
+              "image": "/images/dishes/ice_cream_waffle.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "1 waffle",
+              "allergens": ["gluten", "dairy", "eggs"],
+              "calories": 450
+            },
+            {
+              "id": "item_nutella_waffle",
+              "name": "Nutella Waffle",
+              "description": {
+                "en": "Waffle filled with Nutella and topped with banana and whipped cream",
+                "ru": "Вафля с Nutella, бананом и взбитыми сливками",
+                "tr": "Nutella, muz ve krem ile doldurulmuş waffle"
+              },
+              "price": 12.99,
+              "image": "/images/dishes/nutella_waffle.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "1 waffle",
+              "allergens": ["gluten", "dairy", "eggs", "nuts", "peanuts"],
+              "calories": 500
+            },
+            {
+              "id": "item_savoury_waffle",
+              "name": "Savory Waffle",
+              "description": {
+                "en": "Crispy waffle with spinach, cheese and ham, served with sour cream",
+                "ru": "Вафля со шпинатом, сыром и ветчиной, со сметаной",
+                "tr": "Ispanak, peynir ve jambonla krispy waffle, ekşi krema ile"
+              },
+              "price": 10.99,
+              "image": "/images/dishes/savory_waffle.jpg",
+              "available": true,
+              "vegetarian": false,
+              "spicy": 0,
+              "portion": "1 waffle",
+              "allergens": ["gluten", "dairy"],
+              "calories": 380
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

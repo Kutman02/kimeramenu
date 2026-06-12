@@ -1,0 +1,28 @@
+{
+  "id": "breakfast_place",
+  "name": "Breakfast Palace",
+  "displayName": {
+    "en": "Breakfast Palace",
+    "ru": "Дворец Завтраков",
+    "tr": "Kahvaltı Sarayı"
+  },
+  "description": {
+    "en": "The finest breakfast experience in the city",
+    "ru": "Лучший завтрак в городе",
+    "tr": "Şehirdeki en iyi kahvaltı deneyimi"
+  },
+  "image": "/images/restaurants/breakfast_palace.jpg",
+  "address": "123 Morning Street, Breakfast City",
+  "phone": "+1 (555) 123-4567",
+  "email": "hello@breakfastpalace.com",
+  "website": "https://breakfastpalace.com",
+  "cuisineTypes": [
+    "Turkish",
+    "Mediterranean",
+    "International"
+  ],
+  "settings": {
+    "currency": "USD",
+    "defaultLanguage": "en"
+  }
+}

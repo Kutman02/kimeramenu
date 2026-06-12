@@ -1,0 +1,141 @@
+{
+  "defaultLanguage": "en",
+  "supportedLanguages": ["en", "es", "fr", "ru", "de", "it"],
+  "restaurants": [
+    {
+      "id": "restaurant_1",
+      "nameKey": "restaurant_1_name",
+      "descriptionKey": "restaurant_1_description",
+      "image": "/images/restaurants/restaurant_1.jpg",
+      "address": "123 Main Street, City",
+      "phone": "+1 (555) 123-4567",
+      "email": "info@restaurant.com",
+      "website": "https://restaurant.com",
+      "cuisineTypes": ["Italian", "Mediterranean"],
+      "allergens": [
+        {
+          "id": "gluten",
+          "name": "Gluten",
+          "icon": "🌾"
+        },
+        {
+          "id": "dairy",
+          "name": "Dairy",
+          "icon": "🥛"
+        },
+        {
+          "id": "nuts",
+          "name": "Tree Nuts",
+          "icon": "🌰"
+        },
+        {
+          "id": "shellfish",
+          "name": "Shellfish",
+          "icon": "🦐"
+        },
+        {
+          "id": "peanuts",
+          "name": "Peanuts",
+          "icon": "🥜"
+        },
+        {
+          "id": "soy",
+          "name": "Soy",
+          "icon": "🫘"
+        }
+      ],
+      "categories": [
+        {
+          "id": "appetizers",
+          "nameKey": "category_appetizers",
+          "icon": "🥗",
+          "items": [
+            {
+              "id": "appetizer_1",
+              "nameKey": "dish_bruschetta_name",
+              "descriptionKey": "dish_bruschetta_description",
+              "price": 8.99,
+              "image": "/images/dishes/bruschetta.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "4 pieces",
+              "allergens": ["gluten"],
+              "categoryId": "appetizers"
+            },
+            {
+              "id": "appetizer_2",
+              "nameKey": "dish_calamari_name",
+              "descriptionKey": "dish_calamari_description",
+              "price": 12.99,
+              "image": "/images/dishes/calamari.jpg",
+              "available": true,
+              "vegetarian": false,
+              "spicy": 1,
+              "portion": "300g",
+              "allergens": ["shellfish"],
+              "categoryId": "appetizers"
+            }
+          ]
+        },
+        {
+          "id": "main_courses",
+          "nameKey": "category_main_courses",
+          "icon": "🍝",
+          "items": [
+            {
+              "id": "main_1",
+              "nameKey": "dish_pasta_carbonara_name",
+              "descriptionKey": "dish_pasta_carbonara_description",
+              "price": 15.99,
+              "image": "/images/dishes/carbonara.jpg",
+              "available": true,
+              "vegetarian": false,
+              "spicy": 0,
+              "portion": "400g",
+              "allergens": ["gluten", "dairy"],
+              "categoryId": "main_courses"
+            },
+            {
+              "id": "main_2",
+              "nameKey": "dish_risotto_name",
+              "descriptionKey": "dish_risotto_description",
+              "price": 16.99,
+              "image": "/images/dishes/risotto.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "350g",
+              "allergens": ["dairy"],
+              "categoryId": "main_courses"
+            }
+          ]
+        },
+        {
+          "id": "desserts",
+          "nameKey": "category_desserts",
+          "icon": "🍰",
+          "items": [
+            {
+              "id": "dessert_1",
+              "nameKey": "dish_tiramisu_name",
+              "descriptionKey": "dish_tiramisu_description",
+              "price": 7.99,
+              "image": "/images/dishes/tiramisu.jpg",
+              "available": true,
+              "vegetarian": true,
+              "spicy": 0,
+              "portion": "150g",
+              "allergens": ["gluten", "dairy"],
+              "categoryId": "desserts"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "currency": "USD",
+        "language": "en"
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "gluten",
+    "name": "Gluten",
+    "icon": "🌾"
+  },
+  {
+    "id": "dairy",
+    "name": "Dairy",
+    "icon": "🥛"
+  },
+  {
+    "id": "nuts",
+    "name": "Tree Nuts",
+    "icon": "🌰"
+  },
+  {
+    "id": "eggs",
+    "name": "Eggs",
+    "icon": "🥚"
+  },
+  {
+    "id": "peanuts",
+    "name": "Peanuts",
+    "icon": "🥜"
+  },
+  {
+    "id": "soy",
+    "name": "Soy",
+    "icon": "🫘"
+  }
+]
