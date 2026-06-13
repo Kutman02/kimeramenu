@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type TouchEvent } from 'react';
 import type { RestaurantConfig, Language } from '../../types/menu';
 
 export interface HeaderProps {
@@ -31,11 +31,72 @@ const drawerTitle: Record<Language, string> = {
   tr: 'Menü',
 };
 
+const swipeToCloseHint: Record<Language, string> = {
+  en: 'Swipe left to close',
+  ru: 'Смахните влево, чтобы закрыть',
+  tr: 'Kapatmak icin sola kaydirin',
+};
+
+const DRAWER_CLOSE_THRESHOLD = 90;
+const DRAWER_MAX_TRANSLATE = 220;
+const DRAWER_DRAG_RESISTANCE = 0.9;
+
 export function Header({ restaurant, currentLanguage, onLanguageChange }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [drawerTranslateX, setDrawerTranslateX] = useState(0);
+  const [isDraggingDrawer, setIsDraggingDrawer] = useState(false);
   const menuId = useId();
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  const resetDrawerDrag = useCallback(() => {
+    setDrawerTranslateX(0);
+    setIsDraggingDrawer(false);
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+  }, []);
+
+  const handleDrawerTouchStart = useCallback((e: TouchEvent<HTMLDivElement>) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+  }, []);
+
+  const handleDrawerTouchMove = useCallback((e: TouchEvent<HTMLDivElement>) => {
+    if (touchStartXRef.current == null || touchStartYRef.current == null) return;
+
+    const deltaX = touchStartXRef.current - e.touches[0].clientX;
+    const deltaY = Math.abs(e.touches[0].clientY - touchStartYRef.current);
+    const horizontalGesture = Math.abs(deltaX) > deltaY;
+    const canSwipeClose = horizontalGesture && deltaX > 0;
+
+    if (!canSwipeClose) {
+      if (isDraggingDrawer || drawerTranslateX !== 0) {
+        setIsDraggingDrawer(false);
+        setDrawerTranslateX(0);
+      }
+      return;
+    }
+
+    setIsDraggingDrawer(true);
+    setDrawerTranslateX(Math.min(deltaX * DRAWER_DRAG_RESISTANCE, DRAWER_MAX_TRANSLATE));
+  }, [drawerTranslateX, isDraggingDrawer]);
+
+  const handleDrawerTouchEnd = useCallback(() => {
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+
+    if (!isDraggingDrawer) return;
+
+    if (drawerTranslateX > DRAWER_CLOSE_THRESHOLD) {
+      closeMenu();
+      return;
+    }
+
+    setDrawerTranslateX(0);
+    setIsDraggingDrawer(false);
+  }, [closeMenu, drawerTranslateX, isDraggingDrawer]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -51,9 +112,20 @@ export function Header({ restaurant, currentLanguage, onLanguageChange }: Header
     };
   }, [menuOpen, closeMenu]);
 
+  useEffect(() => {
+    if (menuOpen) return;
+    resetDrawerDrag();
+  }, [menuOpen, resetDrawerDrag]);
+
   if (!restaurant) return null;
 
   const languages: Language[] = ['en', 'ru', 'tr'];
+  const drawerOpacity = isDraggingDrawer ? Math.max(0.82, 1 - drawerTranslateX / 420) : 1;
+  const backdropOpacity = menuOpen
+    ? isDraggingDrawer
+      ? Math.max(0.01, 0.06 - drawerTranslateX / 1000)
+      : 0.06
+    : 0;
 
   return (
     <>
@@ -94,23 +166,49 @@ export function Header({ restaurant, currentLanguage, onLanguageChange }: Header
       {menuOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-[60] bg-slate-900/[0.06] backdrop-blur-[1px] transition-opacity"
+          className="fixed inset-0 z-[60] backdrop-blur-[1px] transition-colors"
           aria-label="Close menu"
           onClick={closeMenu}
+          style={{ backgroundColor: `rgba(15, 23, 42, ${backdropOpacity})` }}
         />
       )}
 
       <div
         id={menuId}
-        className={`fixed inset-y-0 left-0 z-[70] flex w-[min(22rem,92vw)] flex-col border-r border-white/10 bg-gradient-to-b from-slate-900 to-purple-950 text-white shadow-2xl transition-transform duration-300 ease-out ${
-          menuOpen ? 'translate-x-0' : '-translate-x-full pointer-events-none'
+        className={`fixed inset-y-0 left-0 z-[70] flex w-[min(22rem,92vw)] flex-col border-r border-white/10 bg-gradient-to-b from-slate-900 to-purple-950 text-white shadow-2xl ${
+          menuOpen ? '' : 'pointer-events-none'
         }`}
         aria-hidden={!menuOpen}
+        onTouchStart={handleDrawerTouchStart}
+        onTouchMove={handleDrawerTouchMove}
+        onTouchEnd={handleDrawerTouchEnd}
+        onTouchCancel={handleDrawerTouchEnd}
+        style={{
+          transform: menuOpen ? `translateX(${-drawerTranslateX}px)` : 'translateX(-100%)',
+          opacity: drawerOpacity,
+          transition: isDraggingDrawer
+            ? 'none'
+            : 'transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms ease',
+        }}
       >
-        {/* Без второй кнопки закрытия — только гамбургер в хедере + клик по фону + Esc */}
         <div className="shrink-0 border-b border-white/10 px-4 py-4">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-medium uppercase tracking-wider text-purple-200/80">
+              {drawerTitle[currentLanguage]}
+            </p>
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={closeMenu}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full text-purple-100/90 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-200/80"
+            >
+              <span aria-hidden className="text-lg leading-none">
+                ×
+              </span>
+            </button>
+          </div>
           <p className="text-xs font-medium uppercase tracking-wider text-purple-200/80">
-            {drawerTitle[currentLanguage]}
+            {swipeToCloseHint[currentLanguage]}
           </p>
         </div>
 
