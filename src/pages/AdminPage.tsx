@@ -5,6 +5,7 @@ import fallbackDishImage from '../assets/zag.png';
 
 const ALL_LANGUAGES: Language[] = ['en', 'ru', 'tr'];
 const FALLBACK_DISH_IMAGE = fallbackDishImage;
+const ALL_CATEGORIES_VALUE = '__all_categories__';
 
 const emptyTranslations = (): FieldTranslations => ({ en: '', ru: '', tr: '' });
 
@@ -15,6 +16,14 @@ const createMenuItem = (): MenuItem => ({
   price: 0,
   image: '',
   available: true,
+  isComplimentary: false,
+  includedItemIds: [],
+  vegetarian: false,
+  vegan: false,
+  spicy: 0,
+  portion: '',
+  allergens: [],
+  calories: 0,
 });
 
 const createCategory = (): MenuCategory => ({
@@ -22,6 +31,9 @@ const createCategory = (): MenuCategory => ({
   name: 'New Category',
   displayName: { en: 'New Category', ru: 'Новая категория', tr: 'Yeni kategori' },
   icon: '🍽️',
+  group: 'your_selections',
+  hidden: false,
+  isComplimentary: false,
   items: [],
 });
 
@@ -56,19 +68,36 @@ const getCategoryLabel = (category: MenuCategory) =>
 const getItemDescription = (item: MenuItem) =>
   getBestTranslation(item.description) || 'Описание пока не добавлено';
 
+const toSafeNumber = (value: unknown, fallback = 0) => {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim().length) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return fallback;
+};
+
+const normalizeStringList = (value?: string[]) =>
+  (value ?? []).map((entry) => normalizeText(entry)).filter(Boolean);
+
 const prepareMenuItem = (item: MenuItem): MenuItem => ({
   ...item,
   id: normalizeText(item.id) || `item_${Date.now()}`,
   name: normalizeText(item.name) || 'New Item',
   image: normalizeText(item.image),
   description: normalizeTranslations(item.description),
-  price: 0,
-  vegetarian: false,
-  vegan: false,
-  spicy: 0,
-  portion: '',
-  allergens: [],
-  calories: 0,
+  price: Math.max(0, toSafeNumber(item.price)),
+  isComplimentary: Boolean(item.isComplimentary),
+  includedItems: (item.includedItems ?? [])
+    .map((includedItem) => normalizeTranslations(includedItem))
+    .filter((includedItem) => Boolean(getBestTranslation(includedItem))),
+  includedItemIds: normalizeStringList(item.includedItemIds),
+  vegetarian: Boolean(item.vegetarian),
+  vegan: Boolean(item.vegan),
+  spicy: Math.min(5, Math.max(0, Math.round(toSafeNumber(item.spicy)))),
+  portion: normalizeText(item.portion),
+  allergens: normalizeStringList(item.allergens),
+  calories: Math.max(0, Math.round(toSafeNumber(item.calories))),
 });
 
 const prepareCategory = (category: MenuCategory): MenuCategory => {
@@ -79,6 +108,9 @@ const prepareCategory = (category: MenuCategory): MenuCategory => {
     id: normalizeText(category.id) || `category_${Date.now()}`,
     name,
     icon: normalizeText(category.icon),
+    group: category.group ?? 'your_selections',
+    hidden: Boolean(category.hidden),
+    isComplimentary: Boolean(category.isComplimentary),
     displayName: {
       en: normalizeText(category.displayName.en) || name,
       ru: normalizeText(category.displayName.ru) || name,
@@ -100,6 +132,13 @@ type ItemEditorState = {
   itemIndex: number | null;
   draft: MenuItem;
 } | null;
+
+type ItemListEntry = {
+  item: MenuItem;
+  itemIndex: number;
+  category: MenuCategory;
+  categoryIndex: number;
+};
 
 type DashboardStatProps = {
   label: string;
@@ -134,11 +173,15 @@ export function AdminPage() {
   const [data, setData] = useState<MenuData>(initialData);
   const [status, setStatus] = useState('Готово к редактированию.');
   const [activeCategoryId, setActiveCategoryId] = useState(initialData.restaurants[0]?.categories[0]?.id ?? '');
+  const [itemsCategoryId, setItemsCategoryId] = useState<string>(ALL_CATEGORIES_VALUE);
   const [itemSearch, setItemSearch] = useState('');
   const [categoryEditor, setCategoryEditor] = useState<CategoryEditorState>(null);
   const [itemEditor, setItemEditor] = useState<ItemEditorState>(null);
   const [activeSection, setActiveSection] = useState<AdminSectionId>('overview');
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [jsonEditorText, setJsonEditorText] = useState(() =>
+    JSON.stringify(initialData, null, 2)
+  );
 
   const restaurant = data.restaurants[0] ?? null;
   const categories = restaurant?.categories ?? [];
@@ -147,6 +190,12 @@ export function AdminPage() {
   const activeCategoryIndex = categories.findIndex((category) => category.id === activeCategoryId);
   const safeActiveCategoryIndex = activeCategoryIndex >= 0 ? activeCategoryIndex : 0;
   const activeCategory = categories[safeActiveCategoryIndex] ?? null;
+  const itemsCategoryIndex =
+    itemsCategoryId === ALL_CATEGORIES_VALUE
+      ? -1
+      : categories.findIndex((category) => category.id === itemsCategoryId);
+  const itemsCategory = itemsCategoryIndex >= 0 ? categories[itemsCategoryIndex] : null;
+  const createItemCategoryIndex = itemsCategoryIndex >= 0 ? itemsCategoryIndex : safeActiveCategoryIndex;
 
   const totalItems = useMemo(
     () => (restaurant ? restaurant.categories.reduce((sum, category) => sum + category.items.length, 0) : 0),
@@ -167,30 +216,39 @@ export function AdminPage() {
   const availableItems = totalItems - hiddenItems;
 
   const filteredItems = useMemo(() => {
-    if (!activeCategory) {
-      return [] as Array<{ item: MenuItem; itemIndex: number }>;
-    }
-
     const query = normalizeText(itemSearch).toLowerCase();
-    const source = activeCategory.items.map((item, itemIndex) => ({ item, itemIndex }));
+    const source = categories.flatMap((category, categoryIndex) => {
+      if (itemsCategoryId !== ALL_CATEGORIES_VALUE && category.id !== itemsCategoryId) {
+        return [] as ItemListEntry[];
+      }
+
+      return category.items.map((item, itemIndex) => ({
+        item,
+        itemIndex,
+        category,
+        categoryIndex,
+      }));
+    });
 
     if (!query) {
       return source;
     }
 
-    return source.filter(({ item }) =>
+    return source.filter(({ item, category }) =>
       [
         item.id,
         item.name,
         item.description.en,
         item.description.ru,
         item.description.tr,
+        category.id,
+        getCategoryLabel(category),
       ]
         .join(' ')
         .toLowerCase()
         .includes(query)
     );
-  }, [activeCategory, itemSearch]);
+  }, [categories, itemSearch, itemsCategoryId]);
 
   const activeSectionMeta = useMemo(
     () => ADMIN_SECTIONS.find((section) => section.id === activeSection) ?? ADMIN_SECTIONS[0],
@@ -341,6 +399,9 @@ export function AdminPage() {
 
     const fallback = restaurant.categories.find((_, idx) => idx !== safeActiveCategoryIndex);
     setActiveCategoryId(fallback?.id ?? '');
+    if (itemsCategoryId === activeCategory.id) {
+      setItemsCategoryId(fallback?.id ?? ALL_CATEGORIES_VALUE);
+    }
     setStatus('Категория удалена.');
   };
 
@@ -375,26 +436,58 @@ export function AdminPage() {
     );
   };
 
+  const toggleItemAllergen = (allergenId: string) => {
+    setItemEditor((prev) => {
+      if (!prev) return prev;
+
+      const current = prev.draft.allergens ?? [];
+      const nextAllergens = current.includes(allergenId)
+        ? current.filter((id) => id !== allergenId)
+        : [...current, allergenId];
+
+      return {
+        ...prev,
+        draft: {
+          ...prev.draft,
+          allergens: nextAllergens,
+        },
+      };
+    });
+  };
+
+  const setIncludedItemIdsFromText = (value: string) => {
+    const parsedIds = value
+      .split(',')
+      .map((part) => normalizeText(part))
+      .filter(Boolean);
+
+    patchItemDraft({ includedItemIds: parsedIds });
+  };
+
   const openCreateItem = () => {
-    if (!canEdit || !activeCategory) return;
+    if (!canEdit) return;
+
+    const targetCategory = restaurant.categories[createItemCategoryIndex];
+    if (!targetCategory) return;
 
     setItemEditor({
       mode: 'create',
-      categoryIndex: safeActiveCategoryIndex,
+      categoryIndex: createItemCategoryIndex,
       itemIndex: null,
       draft: createMenuItem(),
     });
   };
 
-  const openEditItem = (itemIndex: number) => {
-    if (!canEdit || !activeCategory) return;
+  const openEditItem = (categoryIndex: number, itemIndex: number) => {
+    if (!canEdit) return;
 
-    const item = activeCategory.items[itemIndex];
+    const category = restaurant.categories[categoryIndex];
+    const item = category?.items[itemIndex];
     if (!item) return;
 
     setItemEditor({
       mode: 'edit',
-      categoryIndex: safeActiveCategoryIndex,
+      categoryIndex,
       itemIndex,
       draft: clone(item),
     });
@@ -447,10 +540,11 @@ export function AdminPage() {
     setStatus(itemEditor.mode === 'create' ? 'Товар создан.' : 'Товар обновлён.');
   };
 
-  const handleDeleteProduct = (itemIndex: number) => {
-    if (!canEdit || !activeCategory) return;
+  const handleDeleteProduct = (categoryIndex: number, itemIndex: number) => {
+    if (!canEdit) return;
 
-    const item = activeCategory.items[itemIndex];
+    const category = restaurant.categories[categoryIndex];
+    const item = category?.items[itemIndex];
     if (!item) return;
 
     const confirmed = window.confirm(`Удалить товар "${item.name || item.id}"?`);
@@ -460,7 +554,7 @@ export function AdminPage() {
       if (!prev.restaurants[0]) return prev;
 
       const next = clone(prev);
-      const category = next.restaurants[0].categories[safeActiveCategoryIndex];
+      const category = next.restaurants[0].categories[categoryIndex];
       if (!category) return prev;
       category.items.splice(itemIndex, 1);
       return next;
@@ -487,6 +581,7 @@ export function AdminPage() {
   const handleSave = () => {
     if (!canEdit) return;
     dataService.replaceData(data);
+    setJsonEditorText(JSON.stringify(data, null, 2));
     setStatus('Изменения сохранены в localStorage (dev).');
   };
 
@@ -495,12 +590,38 @@ export function AdminPage() {
 
     const baseData = dataService.getBaseData();
     setData(baseData);
+    setJsonEditorText(JSON.stringify(baseData, null, 2));
     setActiveCategoryId(baseData.restaurants[0]?.categories[0]?.id ?? '');
+    setItemsCategoryId(ALL_CATEGORIES_VALUE);
     setCategoryEditor(null);
     setItemEditor(null);
     setItemSearch('');
     dataService.resetToBaseData();
     setStatus('Сброшено к базовым JSON-файлам.');
+  };
+
+  const refreshJsonEditorFromData = () => {
+    setJsonEditorText(JSON.stringify(data, null, 2));
+    setStatus('JSON-редактор обновлён из текущего состояния админки.');
+  };
+
+  const applyJsonEditor = () => {
+    if (!canEdit) return;
+
+    try {
+      const parsed = JSON.parse(jsonEditorText) as MenuData;
+      const sanitized = clone(parsed);
+
+      setData(sanitized);
+      setActiveCategoryId(sanitized.restaurants[0]?.categories[0]?.id ?? '');
+      setItemsCategoryId(ALL_CATEGORIES_VALUE);
+      setCategoryEditor(null);
+      setItemEditor(null);
+      setItemSearch('');
+      setStatus('JSON применён. Нажмите «Сохранить», чтобы записать в localStorage.');
+    } catch {
+      setStatus('Ошибка JSON: проверьте синтаксис перед применением.');
+    }
   };
 
   return (
@@ -632,7 +753,7 @@ export function AdminPage() {
                 {activeSection === 'items' && (
                   <button
                     type="button"
-                    disabled={!canEdit || !activeCategory}
+                    disabled={!canEdit || !categories.length}
                     onClick={openCreateItem}
                     className="rounded-lg border border-transparent bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
                   >
@@ -884,6 +1005,18 @@ export function AdminPage() {
                         <p>
                           <span className="font-medium text-slate-900">Иконка:</span> {activeCategory.icon || '—'}
                         </p>
+                        <p>
+                          <span className="font-medium text-slate-900">Группа:</span>{' '}
+                          {activeCategory.group || 'your_selections'}
+                        </p>
+                        <p>
+                          <span className="font-medium text-slate-900">Скрыта:</span>{' '}
+                          {activeCategory.hidden ? 'Да' : 'Нет'}
+                        </p>
+                        <p>
+                          <span className="font-medium text-slate-900">Комплимент:</span>{' '}
+                          {activeCategory.isComplimentary ? 'Да' : 'Нет'}
+                        </p>
                         {supportedLanguages.map((lang) => (
                           <p key={lang}>
                             <span className="font-medium text-slate-900">{lang.toUpperCase()}:</span>{' '}
@@ -903,7 +1036,10 @@ export function AdminPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleSectionSelect('items')}
+                          onClick={() => {
+                            setItemsCategoryId(activeCategory.id);
+                            handleSectionSelect('items');
+                          }}
                           className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
                         >
                           Открыть товары категории
@@ -925,24 +1061,37 @@ export function AdminPage() {
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h2 className="text-lg font-semibold text-slate-900">
-                    {activeCategory ? `Товары: ${getCategoryLabel(activeCategory)}` : 'Товары'}
+                    {itemsCategory
+                      ? `Товары: ${getCategoryLabel(itemsCategory)}`
+                      : 'Товары: все категории'}
                   </h2>
                   <p className="text-sm text-slate-500">
-                    Создание и изменение блюд в выбранной категории.
+                    Здесь видны все позиции из JSON. Можно фильтровать по категории и редактировать прямо из общего списка.
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
+                  <select
+                    value={itemsCategoryId}
+                    onChange={(e) => setItemsCategoryId(e.target.value)}
+                    className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-slate-500"
+                  >
+                    <option value={ALL_CATEGORIES_VALUE}>Все категории</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {getCategoryLabel(category)}
+                      </option>
+                    ))}
+                  </select>
                   <input
                     value={itemSearch}
-                    disabled={!activeCategory}
                     onChange={(e) => setItemSearch(e.target.value)}
-                    placeholder="Поиск по ID, названию, описанию..."
+                    placeholder="Поиск по ID, названию, описанию, категории..."
                     className="h-10 w-64 rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-500 disabled:bg-slate-100"
                   />
                   <button
                     type="button"
-                    disabled={!canEdit || !activeCategory}
+                    disabled={!canEdit || !categories.length}
                     onClick={openCreateItem}
                     className="h-10 rounded-lg bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                   >
@@ -959,15 +1108,11 @@ export function AdminPage() {
                 </div>
               </div>
 
-              {!activeCategory ? (
-                <div className="rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-slate-500">
-                  Нет активной категории для отображения товаров.
-                </div>
-              ) : filteredItems.length ? (
+              {filteredItems.length ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {filteredItems.map(({ item, itemIndex }) => (
+                  {filteredItems.map(({ item, itemIndex, category, categoryIndex }) => (
                     <article
-                      key={item.id}
+                      key={`${category.id}:${item.id}`}
                       className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                     >
                       <div className="relative h-44 bg-slate-100">
@@ -986,6 +1131,11 @@ export function AdminPage() {
                                 Скрыт
                               </span>
                             )}
+                            {item.isComplimentary && (
+                              <span className="rounded-full bg-emerald-500/90 px-2 py-0.5 text-xs font-semibold text-white">
+                                Комплимент
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -999,13 +1149,29 @@ export function AdminPage() {
 
                         <div className="flex flex-wrap gap-1.5 text-xs text-slate-500">
                           <span className="rounded-full bg-slate-100 px-2 py-1">ID: {item.id}</span>
+                          <span className="rounded-full bg-indigo-50 px-2 py-1 text-indigo-700">
+                            {getCategoryLabel(category)}
+                          </span>
+                          <span className="rounded-full bg-slate-100 px-2 py-1">
+                            Цена: {item.price ?? 0}
+                          </span>
+                          {item.vegetarian && (
+                            <span className="rounded-full bg-lime-100 px-2 py-1 text-lime-800">
+                              Vegetarian
+                            </span>
+                          )}
+                          {item.vegan && (
+                            <span className="rounded-full bg-green-100 px-2 py-1 text-green-800">
+                              Vegan
+                            </span>
+                          )}
                         </div>
 
                         <div className="flex gap-2">
                           <button
                             type="button"
                             disabled={!canEdit}
-                            onClick={() => openEditItem(itemIndex)}
+                            onClick={() => openEditItem(categoryIndex, itemIndex)}
                             className="flex-1 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                           >
                             Редактировать
@@ -1013,7 +1179,7 @@ export function AdminPage() {
                           <button
                             type="button"
                             disabled={!canEdit}
-                            onClick={() => handleDeleteProduct(itemIndex)}
+                            onClick={() => handleDeleteProduct(categoryIndex, itemIndex)}
                             className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-50"
                           >
                             Удалить
@@ -1025,7 +1191,11 @@ export function AdminPage() {
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-slate-300 p-10 text-center text-sm text-slate-500">
-                  {itemSearch ? 'По запросу ничего не найдено.' : 'В этой категории пока нет товаров.'}
+                  {itemSearch
+                    ? 'По запросу ничего не найдено.'
+                    : itemsCategory
+                      ? 'В выбранной категории пока нет товаров.'
+                      : 'В меню пока нет товаров.'}
                 </div>
               )}
             </section>
@@ -1065,6 +1235,40 @@ export function AdminPage() {
                 >
                   Экспорт JSON
                 </button>
+              </div>
+
+              <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-800">Raw JSON редактор</h3>
+                    <p className="text-xs text-slate-500">
+                      Полный контроль над данными. После применения нажмите «Сохранить (Dev Local)».
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={refreshJsonEditorFromData}
+                      className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                    >
+                      Обновить из UI
+                    </button>
+                    <button
+                      type="button"
+                      onClick={applyJsonEditor}
+                      disabled={!canEdit}
+                      className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                    >
+                      Применить JSON
+                    </button>
+                  </div>
+                </div>
+                <textarea
+                  value={jsonEditorText}
+                  onChange={(e) => setJsonEditorText(e.target.value)}
+                  spellCheck={false}
+                  className="h-80 w-full rounded-lg border border-slate-300 bg-white p-3 font-mono text-xs leading-relaxed text-slate-800 outline-none focus:border-slate-500"
+                />
               </div>
 
               {status && (
@@ -1139,6 +1343,50 @@ export function AdminPage() {
                     onChange={(e) => patchCategoryDraft({ icon: e.target.value })}
                     className="h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-500 disabled:bg-slate-100"
                   />
+                </label>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <label className="text-sm">
+                  <span className="mb-1 block font-medium text-slate-700">Группа</span>
+                  <select
+                    value={categoryEditor.draft.group ?? 'your_selections'}
+                    disabled={!canEdit}
+                    onChange={(e) =>
+                      patchCategoryDraft({
+                        group: e.target.value as MenuCategory['group'],
+                      })
+                    }
+                    className="h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-500 disabled:bg-slate-100"
+                  >
+                    <option value="served_to_table">served_to_table</option>
+                    <option value="your_selections">your_selections</option>
+                    <option value="beverages">beverages</option>
+                  </select>
+                </label>
+
+                <label className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(categoryEditor.draft.hidden)}
+                    disabled={!canEdit}
+                    onChange={(e) => patchCategoryDraft({ hidden: e.target.checked })}
+                  />
+                  Скрыть категорию
+                </label>
+
+                <label className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={Boolean(categoryEditor.draft.isComplimentary)}
+                    disabled={!canEdit}
+                    onChange={(e) =>
+                      patchCategoryDraft({
+                        isComplimentary: e.target.checked,
+                      })
+                    }
+                  />
+                  Комплимент для гостя
                 </label>
               </div>
 
@@ -1247,7 +1495,7 @@ export function AdminPage() {
               </section>
 
               <section className="space-y-4">
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   <label className="text-sm">
                     <span className="mb-1 block font-medium text-slate-700">ID товара</span>
                     <input
@@ -1267,6 +1515,59 @@ export function AdminPage() {
                       className="h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-500 disabled:bg-slate-100"
                     />
                   </label>
+
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium text-slate-700">Цена</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={itemEditor.draft.price ?? 0}
+                      disabled={!canEdit}
+                      onChange={(e) => patchItemDraft({ price: Number(e.target.value) || 0 })}
+                      className="h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-500 disabled:bg-slate-100"
+                    />
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium text-slate-700">Порция</span>
+                    <input
+                      value={itemEditor.draft.portion ?? ''}
+                      disabled={!canEdit}
+                      onChange={(e) => patchItemDraft({ portion: e.target.value })}
+                      placeholder="Например: 300g"
+                      className="h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-500 disabled:bg-slate-100"
+                    />
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium text-slate-700">Калории</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={itemEditor.draft.calories ?? 0}
+                      disabled={!canEdit}
+                      onChange={(e) => patchItemDraft({ calories: Number(e.target.value) || 0 })}
+                      className="h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-500 disabled:bg-slate-100"
+                    />
+                  </label>
+                  <label className="text-sm">
+                    <span className="mb-1 block font-medium text-slate-700">Острота (0-5)</span>
+                    <input
+                      type="number"
+                      min={0}
+                      max={5}
+                      value={itemEditor.draft.spicy ?? 0}
+                      disabled={!canEdit}
+                      onChange={(e) =>
+                        patchItemDraft({
+                          spicy: Math.max(0, Math.min(5, Number(e.target.value) || 0)),
+                        })
+                      }
+                      className="h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-500 disabled:bg-slate-100"
+                    />
+                  </label>
                 </div>
 
                 <div className="flex flex-wrap gap-4 rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
@@ -1279,6 +1580,80 @@ export function AdminPage() {
                     />
                     Доступен
                   </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(itemEditor.draft.vegetarian)}
+                      disabled={!canEdit}
+                      onChange={(e) => patchItemDraft({ vegetarian: e.target.checked })}
+                    />
+                    Vegetarian
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(itemEditor.draft.vegan)}
+                      disabled={!canEdit}
+                      onChange={(e) => patchItemDraft({ vegan: e.target.checked })}
+                    />
+                    Vegan
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(itemEditor.draft.isComplimentary)}
+                      disabled={!canEdit}
+                      onChange={(e) => patchItemDraft({ isComplimentary: e.target.checked })}
+                    />
+                    Комплимент
+                  </label>
+                </div>
+
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium text-slate-700">
+                    includedItemIds (через запятую)
+                  </span>
+                  <input
+                    value={(itemEditor.draft.includedItemIds ?? []).join(', ')}
+                    disabled={!canEdit}
+                    onChange={(e) => setIncludedItemIdsFromText(e.target.value)}
+                    placeholder="item_a, item_b, item_c"
+                    className="h-10 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-slate-500 disabled:bg-slate-100"
+                  />
+                </label>
+
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <p className="mb-2 text-sm font-medium text-slate-700">Аллергены</p>
+                  {restaurant.allergens.length ? (
+                    <div className="flex flex-wrap gap-2">
+                      {restaurant.allergens.map((allergen) => {
+                        const checked = (itemEditor.draft.allergens ?? []).includes(allergen.id);
+
+                        return (
+                          <label
+                            key={allergen.id}
+                            className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs ${
+                              checked
+                                ? 'border-slate-900 bg-slate-900 text-white'
+                                : 'border-slate-300 bg-white text-slate-700'
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              disabled={!canEdit}
+                              onChange={() => toggleItemAllergen(allergen.id)}
+                              className="sr-only"
+                            />
+                            <span>{allergen.icon ?? '•'}</span>
+                            <span>{allergen.name}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-slate-500">В ресторане не настроены аллергены.</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 gap-3">

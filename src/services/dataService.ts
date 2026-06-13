@@ -56,18 +56,6 @@ class DataService {
 
       if (!baseRestaurant) return;
 
-      // Ensure complimentary "served to your table" categories exist after schema updates.
-      const requiredBaseCategories = baseRestaurant.categories.filter(
-        (category) => category.group === 'served_to_table'
-      );
-
-      requiredBaseCategories.forEach((baseCategory, insertIndex) => {
-        const exists = restaurant.categories.some((category) => category.id === baseCategory.id);
-        if (!exists) {
-          restaurant.categories.splice(insertIndex, 0, this.clone(baseCategory));
-        }
-      });
-
       restaurant.categories = restaurant.categories.map((category) => {
         const baseCategory = baseRestaurant.categories.find(
           (candidate) => candidate.id === category.id
@@ -86,8 +74,7 @@ class DataService {
 
             return {
               ...item,
-              description:
-                item.id === 'item_served_to_your_table' ? baseItem.description : item.description,
+              description: item.description ?? baseItem.description,
               isComplimentary: item.isComplimentary ?? baseItem.isComplimentary,
               includedItems: item.includedItems ?? baseItem.includedItems,
               includedItemIds: item.includedItemIds ?? baseItem.includedItemIds,
