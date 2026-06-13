@@ -26,7 +26,7 @@ export function MenuCard({
   return (
     <div
       onClick={() => onClick?.(item)}
-      className={`group relative flex cursor-pointer items-stretch gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md ${
+      className={`group relative flex cursor-pointer items-stretch gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-220 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md active:scale-[0.995] ${
         isPopular ? 'ring-2 ring-yellow-200 border-yellow-300' : ''
       }`}
     >

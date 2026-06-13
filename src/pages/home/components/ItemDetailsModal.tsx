@@ -34,9 +34,14 @@ export function ItemDetailsModal({
   if (!selectedItem) return null;
 
   const imageSrc = selectedItem.image?.trim() ? selectedItem.image : fallbackDishImage;
+  const sheetOpacity = isDraggingSheet ? Math.max(0.84, 1 - sheetTranslateY / 450) : 1;
+  const backdropOpacity = isDraggingSheet ? Math.max(0.2, 0.35 - sheetTranslateY / 700) : 0.35;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/35 backdrop-blur-md">
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm animate-fade-in"
+      style={{ backgroundColor: `rgba(15, 23, 42, ${backdropOpacity})` }}
+    >
       <div
         ref={modalBodyRef}
         onTouchStart={onTouchStart}
@@ -45,12 +50,15 @@ export function ItemDetailsModal({
         onTouchCancel={onTouchEnd}
         style={{
           transform: `translateY(${sheetTranslateY}px)`,
-          transition: isDraggingSheet ? 'none' : 'transform 220ms ease',
+          opacity: sheetOpacity,
+          transition: isDraggingSheet
+            ? 'none'
+            : 'transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1)',
         }}
         className="relative h-[96vh] w-screen overflow-y-auto overscroll-contain rounded-t-3xl border border-white/40 bg-white/78 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.28)] sm:h-[92vh] sm:max-w-3xl sm:rounded-3xl sm:p-6"
       >
         <div className="mb-4 flex justify-center">
-          <span className="h-1.5 w-14 rounded-full bg-slate-400/70" />
+          <span className="h-1.5 w-14 rounded-full bg-slate-400/70 animate-handle-breathe" />
         </div>
         <div className="mb-4">
           <p className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">
@@ -73,7 +81,7 @@ export function ItemDetailsModal({
         <img
           src={imageSrc}
           alt={selectedItem.name}
-          className="mb-4 h-64 w-full rounded-2xl object-cover shadow-sm"
+          className="mb-4 h-64 w-full rounded-2xl object-cover shadow-sm animate-modal-image-in"
           onError={(e) => {
             (e.target as HTMLImageElement).src = fallbackDishImage;
           }}
@@ -89,13 +97,18 @@ export function ItemDetailsModal({
               {HOME_PAGE_TEXT.includedItemsTitle[currentLanguage]}
             </h3>
             <div className="space-y-3">
-              {relatedItems.map((relatedItem) => (
-                <MenuCard
+              {relatedItems.map((relatedItem, index) => (
+                <div
                   key={relatedItem.id}
-                  item={relatedItem}
-                  language={currentLanguage}
-                  onClick={onRelatedItemClick}
-                />
+                  className="animate-soft-rise-in"
+                  style={{ animationDelay: `${Math.min(index * 45, 220)}ms` }}
+                >
+                  <MenuCard
+                    item={relatedItem}
+                    language={currentLanguage}
+                    onClick={onRelatedItemClick}
+                  />
+                </div>
               ))}
             </div>
           </section>

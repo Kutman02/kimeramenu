@@ -12,6 +12,7 @@ export function useItemDetailsModal() {
   const modalBodyRef = useRef<HTMLDivElement | null>(null);
   const touchStartYRef = useRef<number | null>(null);
   const touchStartScrollTopRef = useRef(0);
+  const openAnimationFrameRef = useRef<number | null>(null);
 
   const selectedItem = itemStack[itemStack.length - 1] ?? null;
 
@@ -20,12 +21,37 @@ export function useItemDetailsModal() {
     setIsDraggingSheet(false);
   }, []);
 
+  const cancelOpenAnimation = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (openAnimationFrameRef.current == null) return;
+
+    window.cancelAnimationFrame(openAnimationFrameRef.current);
+    openAnimationFrameRef.current = null;
+  }, []);
+
+  const startOpenFromBottomAnimation = useCallback(() => {
+    if (typeof window === 'undefined') {
+      resetSheet();
+      return;
+    }
+
+    cancelOpenAnimation();
+    const startTranslate = Math.min(Math.max(window.innerHeight * 0.68, 300), 560);
+    setIsDraggingSheet(false);
+    setSheetTranslateY(startTranslate);
+
+    openAnimationFrameRef.current = window.requestAnimationFrame(() => {
+      setSheetTranslateY(0);
+      openAnimationFrameRef.current = null;
+    });
+  }, [cancelOpenAnimation, resetSheet]);
+
   const openItemDetails = useCallback(
     (item: MenuItem) => {
-      resetSheet();
+      startOpenFromBottomAnimation();
       setItemStack([item]);
     },
-    [resetSheet]
+    [startOpenFromBottomAnimation]
   );
 
   const openRelatedItemDetails = useCallback(
@@ -41,9 +67,10 @@ export function useItemDetailsModal() {
   );
 
   const closeItemDetails = useCallback(() => {
+    cancelOpenAnimation();
     resetSheet();
     setItemStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : []));
-  }, [resetSheet]);
+  }, [cancelOpenAnimation, resetSheet]);
 
   const handleModalTouchStart = useCallback((e: TouchEvent<HTMLDivElement>) => {
     const body = modalBodyRef.current;
@@ -136,6 +163,13 @@ export function useItemDetailsModal() {
       });
     };
   }, [isModalOpen]);
+
+  useEffect(
+    () => () => {
+      cancelOpenAnimation();
+    },
+    [cancelOpenAnimation]
+  );
 
   return {
     selectedItem,

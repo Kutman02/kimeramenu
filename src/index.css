@@ -81,12 +81,58 @@ body {
   }
 }
 
+@keyframes handleBreathe {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 0.92;
+    transform: scaleX(1.08);
+  }
+}
+
+@keyframes modalImageIn {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes softRiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in;
 }
 
 .animate-slide-in-up {
   animation: slideInUp 0.3s ease-in;
+}
+
+.animate-handle-breathe {
+  animation: handleBreathe 2.2s ease-in-out infinite;
+}
+
+.animate-modal-image-in {
+  animation: modalImageIn 0.34s ease-out both;
+}
+
+.animate-soft-rise-in {
+  animation: softRiseIn 0.32s ease-out both;
 }
 
 /* Utility Classes */
