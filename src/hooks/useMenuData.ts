@@ -1,20 +1,58 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { dataService } from '../services/dataService';
-import type { MenuItem } from '../types/menu';
+import type { MenuItem, RestaurantConfig } from '../types/menu';
 
 /**
  * Hook для получения ресторана
  */
 export function useRestaurant(restaurantId: string) {
-  const restaurant = useMemo(
-    () => dataService.getRestaurant(restaurantId),
-    [restaurantId]
-  );
+  const [restaurant, setRestaurant] = useState<RestaurantConfig | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isActive = true;
+
+    const loadTimer = setTimeout(() => {
+      try {
+        const requestedRestaurant = dataService.getRestaurant(restaurantId);
+        const fallbackRestaurant = dataService.getAllRestaurants()[0] ?? null;
+        const nextRestaurant = requestedRestaurant ?? fallbackRestaurant;
+
+        if (isActive) {
+          setRestaurant(nextRestaurant);
+
+          if (!nextRestaurant) {
+            setError('Menu data is not available');
+          } else if (!requestedRestaurant) {
+            setError(`Restaurant "${restaurantId}" not found. Showing fallback restaurant.`);
+          } else {
+            setError(null);
+          }
+        }
+      } catch (loadError) {
+        console.error('Failed to load restaurant:', loadError);
+        if (isActive) {
+          setRestaurant(null);
+          setError('Failed to load restaurant data');
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      }
+    }, 0);
+
+    return () => {
+      isActive = false;
+      clearTimeout(loadTimer);
+    };
+  }, [restaurantId]);
 
   return {
     restaurant,
-    isLoading: false,
-    error: null,
+    isLoading,
+    error,
   };
 }
 

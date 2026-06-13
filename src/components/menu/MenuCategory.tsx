@@ -1,17 +1,15 @@
 import { MenuCard } from './MenuCard';
-import type { MenuCategory as MenuCategoryType, MenuItem, Language, Allergen } from '../../types/menu';
+import type { MenuCategory as MenuCategoryType, MenuItem, Language } from '../../types/menu';
 
 export interface MenuCategoryProps {
   category: MenuCategoryType;
   language: Language;
-  allergens: Allergen[];
   onItemClick?: (item: MenuItem) => void;
 }
 
 export function MenuCategory({
   category,
   language,
-  allergens,
   onItemClick,
 }: MenuCategoryProps) {
   // Filter available items
@@ -49,7 +47,6 @@ export function MenuCategory({
             key={item.id}
             item={item}
             language={language}
-            allergens={allergens}
             onClick={onItemClick}
           />
         ))}

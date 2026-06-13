@@ -36,6 +36,9 @@ export interface MenuItem {
   price: number;
   image: string;
   available: boolean;
+  isComplimentary?: boolean; // Included for all guests
+  includedItems?: FieldTranslations[]; // Nested list for set menus
+  includedItemIds?: string[]; // Linked items shown inside modal
   vegetarian?: boolean;
   vegan?: boolean;
   spicy?: number; // 0-5 scale
@@ -52,6 +55,9 @@ export interface MenuCategory {
   name: string; // Original name
   displayName: FieldTranslations; // Translated display names
   icon?: string;
+  isComplimentary?: boolean; // Included meal category
+  group?: 'served_to_table' | 'your_selections' | 'beverages';
+  hidden?: boolean;
   items: MenuItem[];
 }
 

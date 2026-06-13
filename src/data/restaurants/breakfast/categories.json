@@ -1,913 +1,843 @@
 [
   {
-    "id": "turkish_breakfast",
-    "name": "Turkish Breakfast",
+    "id": "served_to_your_table",
+    "name": "SERVED TO YOUR TABLE",
     "displayName": {
-      "en": "Turkish Breakfast",
-      "ru": "Турецкий Завтрак",
-      "tr": "Türk Kahvaltısı"
+      "en": "SERVED TO YOUR TABLE",
+      "ru": "ПОДАЕТСЯ К ВАШЕМУ СТОЛУ",
+      "tr": "MASANIZA SERVIS EDILIR"
     },
-    "icon": "🥘",
+    "icon": "🍽️",
+    "isComplimentary": true,
+    "group": "served_to_table",
     "items": [
       {
-        "id": "item_menemen",
-        "name": "Menemen",
+        "id": "item_served_to_your_table",
+        "name": "SERVED TO YOUR TABLE",
         "description": {
-          "en": "Traditional Turkish scrambled eggs with tomatoes, peppers and onions",
-          "ru": "Традиционная турецкая яичница с помидорами, перцем и луком",
-          "tr": "Domates, biber ve soğanla pişirilmiş geleneksel Türk yumurtası"
+          "en": "Breakfast includes all items listed below.",
+          "ru": "В завтрак входят все позиции ниже.",
+          "tr": "Kahvaltiya asagidaki tum urunler dahildir."
         },
-        "price": 8.99,
+        "price": 0,
         "image": "/images/dishes/menemen.jpg",
         "available": true,
-        "vegetarian": false,
-        "spicy": 2,
-        "portion": "350g",
-        "allergens": [
-          "eggs"
-        ],
-        "calories": 280
-      },
-      {
-        "id": "item_borek",
-        "name": "Cheese Borek",
-        "description": {
-          "en": "Crispy pastry filled with white cheese and herbs",
-          "ru": "Хрустящее пирожное с белым сыром и травами",
-          "tr": "Beyaz peynir ve otlarla doldurulmuş gevrek bir hamur"
-        },
-        "price": 7.99,
-        "image": "/images/dishes/cheese_borek.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "200g",
-        "allergens": [
-          "gluten",
-          "dairy"
-        ],
-        "calories": 320
-      },
-      {
-        "id": "item_sucuk",
-        "name": "Sucuk & Cheese Plate",
-        "description": {
-          "en": "Turkish spicy sausage with assorted cheeses and olives",
-          "ru": "Турецкая пряная колбаса с ассортиментом сыров и оливок",
-          "tr": "Türk baharatlandırılmış sosis ve çeşitli peynirler ve zeytinler"
-        },
-        "price": 10.99,
-        "image": "/images/dishes/sucuk_cheese.jpg",
-        "available": true,
-        "vegetarian": false,
-        "spicy": 3,
-        "portion": "300g",
-        "allergens": [
-          "dairy"
-        ],
-        "calories": 420
-      },
-      {
-        "id": "item_muhammara",
-        "name": "Muhammara",
-        "description": {
-          "en": "Roasted red pepper and walnut dip, served with bread",
-          "ru": "Паста из жареного красного перца и грецких орехов",
-          "tr": "Kızarmış kırmızı biber ve ceviz dip"
-        },
-        "price": 6.99,
-        "image": "/images/dishes/muhammara.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 1,
-        "portion": "150g",
-        "allergens": [
-          "nuts",
-          "gluten"
-        ],
-        "calories": 180
+        "isComplimentary": true,
+        "includedItemIds": [
+          "served_table_honey",
+          "served_table_farm_veggies",
+          "served_table_preserves",
+          "served_table_bakery",
+          "served_table_cheeses"
+        ]
       }
     ]
   },
   {
-    "id": "eggs",
-    "name": "Eggs",
+    "id": "served_to_your_table_details",
+    "name": "Served To Your Table Details",
     "displayName": {
-      "en": "Eggs",
-      "ru": "Яйца",
-      "tr": "Yumurtalar"
+      "en": "Served To Your Table Details",
+      "ru": "Состав стандартного завтрака",
+      "tr": "Masaya Servis Icerikleri"
     },
-    "icon": "🥚",
+    "hidden": true,
+    "group": "served_to_table",
     "items": [
       {
-        "id": "item_scrambled",
-        "name": "Scrambled Eggs",
+        "id": "served_table_honey",
+        "name": "Honey & Clotted Cream Set",
         "description": {
-          "en": "Fluffy scrambled eggs with butter and toast",
-          "ru": "Пушистая яичница со сливочным маслом и тостами",
-          "tr": "Tereyağ ve tost ile huni doldurulmuş yumurta"
+          "en": "Honey, clotted cream, tahini & grape molasses, peanut butter, black & green olives, acuka.",
+          "ru": "Мед, каймак, тахини и виноградный пекмез, арахисовая паста, черные и зеленые оливки, аджука.",
+          "tr": "Bal, kaymak, tahin ve uzum pekmezi, fistik ezmesi, siyah ve yesil zeytin, acuka."
         },
-        "price": 5.99,
-        "image": "/images/dishes/scrambled_eggs.jpg",
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
         "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "2 eggs",
-        "allergens": [
-          "eggs",
-          "dairy",
-          "gluten"
-        ],
-        "calories": 280
+        "isComplimentary": true
       },
       {
-        "id": "item_fried",
-        "name": "Fried Eggs",
+        "id": "served_table_farm_veggies",
+        "name": "From Our Huysuz Coban EcoFarm",
         "description": {
-          "en": "Sunny-side up or over-easy fried eggs with toast",
-          "ru": "Глазунья с тостами",
-          "tr": "Kızarmış yumurta ve tost"
+          "en": "Tomatoes, cucumbers, green peppers, fresh herbs from our farm.",
+          "ru": "Томаты, огурцы, зеленый перец и свежая зелень с нашей фермы.",
+          "tr": "Ciftligimizden domates, salatalik, yesil biber ve taze otlar."
         },
-        "price": 5.99,
-        "image": "/images/dishes/fried_eggs.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "2 eggs",
-        "allergens": [
-          "eggs",
-          "dairy",
-          "gluten"
-        ],
-        "calories": 290
-      },
-      {
-        "id": "item_omelette",
-        "name": "Vegetable Omelette",
-        "description": {
-          "en": "Three-egg omelette filled with mushrooms, bell peppers and onions",
-          "ru": "Омлет с грибами, болгарским перцем и луком",
-          "tr": "Mantar, biber ve soğanla doldurulmuş yumurta omleti"
-        },
-        "price": 8.99,
+        "price": 0,
         "image": "/images/dishes/vegetable_omelette.jpg",
         "available": true,
-        "vegetarian": true,
-        "spicy": 1,
-        "portion": "3 eggs",
-        "allergens": [
-          "eggs",
-          "dairy"
-        ],
-        "calories": 320
+        "isComplimentary": true
       },
       {
-        "id": "item_spanish_omelette",
-        "name": "Spanish Omelette",
+        "id": "served_table_preserves",
+        "name": "Homemade Preserves of the Day",
         "description": {
-          "en": "Thick omelette with potatoes, onions and peppers",
-          "ru": "Толстый омлет с картофелем, луком и перцем",
-          "tr": "Patates, soğan ve biber ile kalın omlet"
+          "en": "A rotating daily selection of homemade preserves.",
+          "ru": "Ежедневный выбор домашних варений.",
+          "tr": "Gunluk degisen ev yapimi recel secimi."
         },
-        "price": 9.99,
-        "image": "/images/dishes/spanish_omelette.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "large",
-        "allergens": [
-          "eggs",
-          "dairy"
-        ],
-        "calories": 380
-      }
-    ]
-  },
-  {
-    "id": "pancakes",
-    "name": "Pancakes",
-    "displayName": {
-      "en": "Pancakes",
-      "ru": "Блины",
-      "tr": "Krep"
-    },
-    "icon": "🥞",
-    "items": [
-      {
-        "id": "item_classic_pancakes",
-        "name": "Classic Pancakes",
-        "description": {
-          "en": "Stack of fluffy pancakes with maple syrup and butter",
-          "ru": "Стопка пушистых блинов с кленовым сиропом и сливочным маслом",
-          "tr": "Akçaağaç şurubu ve tereyağ ile yığılmış yumuşak krep"
-        },
-        "price": 9.99,
+        "price": 0,
         "image": "/images/dishes/classic_pancakes.jpg",
         "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "4 pancakes",
-        "allergens": [
-          "gluten",
-          "dairy",
-          "eggs"
-        ],
-        "calories": 420
+        "isComplimentary": true
       },
       {
-        "id": "item_berry_pancakes",
-        "name": "Berry Pancakes",
+        "id": "served_table_bakery",
+        "name": "From the Bakery",
         "description": {
-          "en": "Fluffy pancakes topped with fresh berries, whipped cream and syrup",
-          "ru": "Блины с ягодами, взбитыми сливками и сиропом",
-          "tr": "Taze meyveler, kremalı krem ve şurup ile tabakalar krep"
+          "en": "Traditional Turkish pastry and bread selection.",
+          "ru": "Традиционная турецкая выпечка и выбор свежего хлеба.",
+          "tr": "Geleneksel Turk hamur isi ve ekmek secimi."
         },
-        "price": 11.99,
-        "image": "/images/dishes/berry_pancakes.jpg",
+        "price": 0,
+        "image": "/images/dishes/cheese_borek.jpg",
         "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "4 pancakes",
-        "allergens": [
-          "gluten",
-          "dairy",
-          "eggs"
-        ],
-        "calories": 480
+        "isComplimentary": true
       },
       {
-        "id": "item_nutella_pancakes",
-        "name": "Nutella Pancakes",
+        "id": "served_table_cheeses",
+        "name": "Your Choice of Cheeses",
         "description": {
-          "en": "Pancakes with Nutella spread, bananas and whipped cream",
-          "ru": "Блины с Nutella, бананами и взбитыми сливками",
-          "tr": "Nutella, muz ve krem ile krep"
+          "en": "Erzurum string cheese, Erzincan tulum, Burdur kashar, Huysuz Coban goat cheese, Canakkale Ezine.",
+          "ru": "На выбор: сыр-косичка Эрзурум, тулум Эрзинджан, кашар Бурдур, козий сыр Huysuz Coban, Чанаккале Эзине.",
+          "tr": "Erzurum tel peyniri, Erzincan tulum, Burdur kasar, Huysuz Coban keci peyniri, Canakkale Ezine."
         },
-        "price": 12.99,
-        "image": "/images/dishes/nutella_pancakes.jpg",
+        "price": 0,
+        "image": "/images/dishes/sucuk_cheese.jpg",
         "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "4 pancakes",
-        "allergens": [
-          "gluten",
-          "dairy",
-          "eggs",
-          "nuts",
-          "peanuts"
-        ],
-        "calories": 520
-      },
-      {
-        "id": "item_chocolate_pancakes",
-        "name": "Chocolate Chip Pancakes",
-        "description": {
-          "en": "Pancakes loaded with chocolate chips and served with chocolate sauce",
-          "ru": "Блины с шоколадной стружкой и шоколадным соусом",
-          "tr": "Çikolata parçaları ve çikolata sos ile krep"
-        },
-        "price": 10.99,
-        "image": "/images/dishes/chocolate_pancakes.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "4 pancakes",
-        "allergens": [
-          "gluten",
-          "dairy",
-          "eggs"
-        ],
-        "calories": 450
+        "isComplimentary": true
       }
     ]
   },
   {
-    "id": "waffles",
-    "name": "Waffles",
+    "id": "organic_eggs",
+    "name": "Organic Eggs from Huysuz Çoban Ecofarm",
     "displayName": {
-      "en": "Waffles",
-      "ru": "Вафли",
-      "tr": "Waffle"
+      "en": "Organic Eggs from Huysuz Çoban Ecofarm",
+      "ru": "Organic Eggs from Huysuz Çoban Ecofarm",
+      "tr": "Huysuz Çoban Ecofarm Organik Yumurtalar"
     },
-    "icon": "🧇",
+    "icon": "🥚",
+    "group": "your_selections",
     "items": [
       {
-        "id": "item_classic_waffle",
-        "name": "Classic Waffle",
-        "description": {
-          "en": "Crispy Belgian waffle with maple syrup and whipped cream",
-          "ru": "Хрустящая бельгийская вафля с кленовым сиропом и взбитыми сливками",
-          "tr": "Akçaağaç şurubu ve krem ile gevrek Belçika waffles"
-        },
-        "price": 9.99,
-        "image": "/images/dishes/classic_waffle.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "1 waffle",
-        "allergens": [
-          "gluten",
-          "dairy",
-          "eggs"
-        ],
-        "calories": 380
-      },
-      {
-        "id": "item_strawberry_waffle",
-        "name": "Strawberry Waffle",
-        "description": {
-          "en": "Waffle topped with fresh strawberries, cream and chocolate drizzle",
-          "ru": "Вафля с клубникой, сливками и шоколадной крошкой",
-          "tr": "Taze çilek, krem ve çikolata ile waffle"
-        },
-        "price": 11.99,
-        "image": "/images/dishes/strawberry_waffle.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "1 waffle",
-        "allergens": [
-          "gluten",
-          "dairy",
-          "eggs"
-        ],
-        "calories": 420
-      },
-      {
-        "id": "item_ice_cream_waffle",
-        "name": "Ice Cream Waffle",
-        "description": {
-          "en": "Crispy waffle topped with vanilla ice cream and choice of sauce",
-          "ru": "Вафля с ванильным мороженым и соусом по выбору",
-          "tr": "Vanilya dondurması ve sos seçimi ile waffle"
-        },
-        "price": 10.99,
-        "image": "/images/dishes/ice_cream_waffle.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "1 waffle",
-        "allergens": [
-          "gluten",
-          "dairy",
-          "eggs"
-        ],
-        "calories": 450
-      },
-      {
-        "id": "item_nutella_waffle",
-        "name": "Nutella Waffle",
-        "description": {
-          "en": "Waffle filled with Nutella and topped with banana and whipped cream",
-          "ru": "Вафля с Nutella, бананом и взбитыми сливками",
-          "tr": "Nutella, muz ve krem ile doldurulmuş waffle"
-        },
-        "price": 12.99,
-        "image": "/images/dishes/nutella_waffle.jpg",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "1 waffle",
-        "allergens": [
-          "gluten",
-          "dairy",
-          "eggs",
-          "nuts",
-          "peanuts"
-        ],
-        "calories": 500
-      },
-      {
-        "id": "item_savoury_waffle",
-        "name": "Savory Waffle",
-        "description": {
-          "en": "Crispy waffle with spinach, cheese and ham, served with sour cream",
-          "ru": "Вафля со шпинатом, сыром и ветчиной, со сметаной",
-          "tr": "Ispanak, peynir ve jambonla krispy waffle, ekşi krema ile"
-        },
-        "price": 10.99,
-        "image": "/images/dishes/savory_waffle.jpg",
-        "available": true,
-        "vegetarian": false,
-        "spicy": 0,
-        "portion": "1 waffle",
-        "allergens": [
-          "gluten",
-          "dairy"
-        ],
-        "calories": 380
-      }
-    ]
-  },
-  {
-    "id": "organic_eggs_huysuz_coban",
-    "name": "Organic Eggs from Huysuz Coban Ecofarm",
-    "displayName": {
-      "en": "Organic Eggs from Huysuz Coban Ecofarm",
-      "ru": "Органические яйца Huysuz Coban Ecofarm",
-      "tr": "Huysuz Coban Ecofarm Organik Yumurtalar"
-    },
-    "icon": "🍳",
-    "items": [
-      {
-        "id": "item_brochure_fried_eggs",
+        "id": "item_fried_eggs",
         "name": "Fried Eggs",
         "description": {
-          "en": "Classic fried eggs from the breakfast selection.",
-          "ru": "Классическая жареная яичница из меню завтрака.",
-          "tr": "Kahvalti seciminden klasik kizarmis yumurta."
+          "en": "Classic fried eggs.",
+          "ru": "Классическая глазунья.",
+          "tr": "Klasik sahanda yumurta."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "eggs"
-        ],
-        "calories": 0
+        "image": "/images/dishes/fried_eggs.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_scrambled_eggs",
+        "id": "item_scrambled_eggs",
         "name": "Scrambled Eggs",
         "description": {
-          "en": "Soft scrambled eggs from the organic egg section.",
-          "ru": "Нежная яичница-болтунья из органической секции.",
-          "tr": "Organik yumurta bolumunden yumusak karisik yumurta."
+          "en": "Soft scrambled eggs.",
+          "ru": "Нежный скрэмбл.",
+          "tr": "Yumusak scramble yumurta."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "eggs"
-        ],
-        "calories": 0
+        "image": "/images/dishes/scrambled_eggs.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_menemen",
+        "id": "item_menemen_selection",
         "name": "Menemen",
         "description": {
-          "en": "Traditional menemen from brochure breakfast list.",
-          "ru": "Традиционный менемен из меню на афише.",
-          "tr": "Broşur kahvalti listesinden geleneksel menemen."
+          "en": "Menemen, with or without chili.",
+          "ru": "Менемен, с чили или без чили.",
+          "tr": "Menemen, acili veya acisiz."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 1,
-        "portion": "",
-        "allergens": [
-          "eggs"
-        ],
-        "calories": 0
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_eggs_with_sucuk",
+        "id": "item_eggs_with_sucuk",
         "name": "Eggs with Sucuk",
         "description": {
-          "en": "Eggs cooked with Turkish sucuk sausage.",
+          "en": "Eggs cooked with Turkish sucuk.",
           "ru": "Яйца, приготовленные с турецким суджуком.",
-          "tr": "Turk sucuk ile pisirilmis yumurta."
+          "tr": "Turk sucuklu yumurta."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": false,
-        "spicy": 2,
-        "portion": "",
-        "allergens": [
-          "eggs"
-        ],
-        "calories": 0
+        "image": "/images/dishes/sucuk_cheese.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_cilbir",
-        "name": "Cilbir",
+        "id": "item_cilbir",
+        "name": "Çılbır",
         "description": {
-          "en": "Poached eggs with yogurt and chili butter.",
-          "ru": "Яйца пашот с йогуртом и острым маслом.",
-          "tr": "Yogurt ve acili tereyagi ile cilbir."
+          "en": "Poached egg with yogurt and chili tar.",
+          "ru": "Пашот с йогуртом и соусом чили тар.",
+          "tr": "Yogurt ve chili tar soslu poché yumurta."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 1,
-        "portion": "",
-        "allergens": [
-          "eggs",
-          "dairy"
-        ],
-        "calories": 0
+        "image": "/images/dishes/fried_eggs.jpg",
+        "available": true
       }
     ]
   },
   {
-    "id": "omelettes_brochure",
+    "id": "omelettes",
     "name": "Omelettes",
     "displayName": {
       "en": "Omelettes",
       "ru": "Омлеты",
       "tr": "Omletler"
     },
-    "icon": "🥚",
+    "icon": "🍳",
+    "group": "your_selections",
     "items": [
       {
-        "id": "item_brochure_omelette_plain",
-        "name": "Plain Omelette",
+        "id": "item_omelette_plain",
+        "name": "Plain",
         "description": {
-          "en": "Simple omelette option from brochure.",
-          "ru": "Простой омлет из меню на афише.",
-          "tr": "Broşurdeki sade omlet secenegi."
+          "en": "Classic plain omelette.",
+          "ru": "Классический омлет без добавок.",
+          "tr": "Klasik sade omlet."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "eggs"
-        ],
-        "calories": 0
+        "image": "/images/dishes/vegetable_omelette.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_omelette_kashar",
-        "name": "Kashar Cheese Omelette",
+        "id": "item_omelette_kashar_cheese",
+        "name": "Kashar Cheese",
         "description": {
           "en": "Omelette with kashar cheese.",
           "ru": "Омлет с кашар-сыром.",
           "tr": "Kasar peynirli omlet."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "eggs",
-          "dairy"
-        ],
-        "calories": 0
+        "image": "/images/dishes/vegetable_omelette.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_omelette_mushrooms",
-        "name": "Mushroom Omelette",
+        "id": "item_omelette_mushrooms",
+        "name": "Mushrooms",
         "description": {
           "en": "Omelette with mushrooms.",
           "ru": "Омлет с грибами.",
-          "tr": "Mantarlı omlet."
+          "tr": "Mantarli omlet."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "eggs"
-        ],
-        "calories": 0
+        "image": "/images/dishes/vegetable_omelette.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_omelette_sucuk",
-        "name": "Sucuk Omelette",
+        "id": "item_omelette_peppers",
+        "name": "Peppers",
         "description": {
-          "en": "Omelette with sucuk sausage.",
+          "en": "Omelette with peppers.",
+          "ru": "Омлет с перцем.",
+          "tr": "Biberli omlet."
+        },
+        "price": 0,
+        "image": "/images/dishes/vegetable_omelette.jpg",
+        "available": true
+      },
+      {
+        "id": "item_omelette_tomatoes",
+        "name": "Tomatoes",
+        "description": {
+          "en": "Omelette with tomatoes.",
+          "ru": "Омлет с томатами.",
+          "tr": "Domatesli omlet."
+        },
+        "price": 0,
+        "image": "/images/dishes/vegetable_omelette.jpg",
+        "available": true
+      },
+      {
+        "id": "item_omelette_sucuk",
+        "name": "Sucuk",
+        "description": {
+          "en": "Omelette with sucuk.",
           "ru": "Омлет с суджуком.",
           "tr": "Sucuklu omlet."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": false,
-        "spicy": 2,
-        "portion": "",
-        "allergens": [
-          "eggs"
-        ],
-        "calories": 0
+        "image": "/images/dishes/sucuk_cheese.jpg",
+        "available": true
+      },
+      {
+        "id": "item_omelette_lor_cheese",
+        "name": "Lor Cheese",
+        "description": {
+          "en": "Omelette with lor cheese.",
+          "ru": "Омлет с сыром лор.",
+          "tr": "Lor peynirli omlet."
+        },
+        "price": 0,
+        "image": "/images/dishes/cheese_borek.jpg",
+        "available": true
+      },
+      {
+        "id": "item_omelette_dill_parsley",
+        "name": "Dill & Parsley",
+        "description": {
+          "en": "Omelette with dill and parsley.",
+          "ru": "Омлет с укропом и петрушкой.",
+          "tr": "Dereotu ve maydanozlu omlet."
+        },
+        "price": 0,
+        "image": "/images/dishes/vegetable_omelette.jpg",
+        "available": true
       }
     ]
   },
   {
-    "id": "ekmek_ustu_brochure",
-    "name": "Ekmek Ustu",
+    "id": "ekmek_ustu",
+    "name": "Ekmek Üstü",
     "displayName": {
-      "en": "Ekmek Ustu",
-      "ru": "Экмек Устю",
-      "tr": "Ekmek Ustu"
+      "en": "Ekmek Üstü",
+      "ru": "Ekmek Üstü",
+      "tr": "Ekmek Üstü"
     },
     "icon": "🥪",
+    "group": "your_selections",
     "items": [
       {
-        "id": "item_brochure_ekmek_avocado",
-        "name": "Ekmek Ustu - Avocado",
+        "id": "item_ekmek_avocado",
+        "name": "Avocado",
         "description": {
-          "en": "Open-faced selection with avocado.",
-          "ru": "Открытый вариант с авокадо.",
-          "tr": "Avokadolu acik ekmek secenegi."
+          "en": "Served with poached or fried egg on request.",
+          "ru": "Подается с пашотом или жареным яйцом по запросу.",
+          "tr": "Istege gore poşe veya sahanda yumurta ile servis edilir."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_ekmek_roast_beef",
-        "name": "Ekmek Ustu - Roast Beef",
+        "id": "item_ekmek_roast_beef",
+        "name": "Roast Beef",
         "description": {
-          "en": "Open-faced selection with roast beef.",
-          "ru": "Открытый вариант с ростбифом.",
-          "tr": "Roast beef ile acik ekmek secenegi."
+          "en": "Served with poached or fried egg on request.",
+          "ru": "Подается с пашотом или жареным яйцом по запросу.",
+          "tr": "Istege gore poşe veya sahanda yumurta ile servis edilir."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": false,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/sucuk_cheese.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_ekmek_salmon",
-        "name": "Ekmek Ustu - Salmon",
+        "id": "item_ekmek_salmon",
+        "name": "Salmon",
         "description": {
-          "en": "Open-faced selection with salmon.",
-          "ru": "Открытый вариант с лососем.",
-          "tr": "Somonlu acik ekmek secenegi."
+          "en": "Served with poached or fried egg on request.",
+          "ru": "Подается с пашотом или жареным яйцом по запросу.",
+          "tr": "Istege gore poşe veya sahanda yumurta ile servis edilir."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": false,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/spanish_omelette.jpg",
+        "available": true
       }
     ]
   },
   {
-    "id": "indulgent_bites_brochure",
+    "id": "indulgent_bites",
     "name": "Indulgent Bites",
     "displayName": {
       "en": "Indulgent Bites",
-      "ru": "Сытные закуски",
-      "tr": "Keyifli Atistirmaliklar"
+      "ru": "Indulgent Bites",
+      "tr": "Indulgent Bites"
     },
-    "icon": "🍽️",
+    "icon": "🧇",
+    "group": "your_selections",
     "items": [
       {
-        "id": "item_brochure_gozleme",
-        "name": "Gozleme",
+        "id": "item_gozleme",
+        "name": "Gözleme",
         "description": {
-          "en": "Gozleme from brochure indulgent bites section.",
-          "ru": "Гёзлеме из раздела сытных закусок.",
-          "tr": "Broşurdeki keyifli atistirmaliklardan gozleme."
+          "en": "Pumpkin or herbs & cheese.",
+          "ru": "Тыква или зелень с сыром.",
+          "tr": "Balkabakli veya otlu-peynirli."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "gluten"
-        ],
-        "calories": 0
+        "image": "/images/dishes/cheese_borek.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_egg_pizza",
-        "name": "Egg Pizza",
+        "id": "item_indulgent_pancakes",
+        "name": "Pancakes",
         "description": {
-          "en": "Egg pizza listed in indulgent bites.",
-          "ru": "Egg pizza из раздела закусок.",
-          "tr": "Keyifli atistirmaliklar bolumunden egg pizza."
+          "en": "Plain or fruit & maple syrup.",
+          "ru": "Классические или с фруктами и кленовым сиропом.",
+          "tr": "Sade veya meyve ve akçaağaç şurubu ile."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "eggs",
-          "gluten"
-        ],
-        "calories": 0
+        "image": "/images/dishes/classic_pancakes.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_quesadilla",
+        "id": "item_syrniki",
+        "name": "Syrniki",
+        "description": {
+          "en": "Fresh cheese pancakes, vanilla cream & jam.",
+          "ru": "Сырники, ванильный крем и джем.",
+          "tr": "Taze peynirli pankek, vanilya kremasi ve recel."
+        },
+        "price": 0,
+        "image": "/images/dishes/classic_pancakes.jpg",
+        "available": true
+      },
+      {
+        "id": "item_egg_piyaz",
+        "name": "Egg Piyaz",
+        "description": {
+          "en": "Tahini and parsley.",
+          "ru": "Тахини и петрушка.",
+          "tr": "Tahin ve maydanoz."
+        },
+        "price": 0,
+        "image": "/images/dishes/fried_eggs.jpg",
+        "available": true
+      },
+      {
+        "id": "item_quesadilla",
         "name": "Quesadilla",
         "description": {
-          "en": "Quesadilla from brochure menu.",
-          "ru": "Кесадилья из меню на афише.",
-          "tr": "Broşur menuden quesadilla."
+          "en": "Scrambled eggs, mixed peppers, kashar cheese, guacamole.",
+          "ru": "Скрэмбл, болгарский перец, кашар-сыр, гуакамоле.",
+          "tr": "Scramble yumurta, karisik biber, kasar peyniri, guacamole."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 1,
-        "portion": "",
-        "allergens": [
-          "gluten",
-          "dairy"
-        ],
-        "calories": 0
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_simitli",
-        "name": "Simitli",
-        "description": {
-          "en": "Simit-based breakfast bite.",
-          "ru": "Завтрак на основе симита.",
-          "tr": "Simit tabanli kahvaltilik."
-        },
-        "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "gluten"
-        ],
-        "calories": 0
-      },
-      {
-        "id": "item_brochure_crispy_potatoes_peppers",
+        "id": "item_crispy_potatoes_peppers",
         "name": "Crispy Potatoes & Peppers",
         "description": {
-          "en": "Crispy potatoes with peppers and sauce.",
-          "ru": "Хрустящий картофель с перцем и соусом.",
-          "tr": "Biber ve sos ile citir patates."
+          "en": "Served with tomato sauce.",
+          "ru": "Подается с томатным соусом.",
+          "tr": "Domates sosu ile servis edilir."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 1,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/spanish_omelette.jpg",
+        "available": true
       }
     ]
   },
   {
-    "id": "wholesome_bowls_brochure",
+    "id": "wholesome_bowls",
     "name": "Wholesome Bowls",
     "displayName": {
       "en": "Wholesome Bowls",
-      "ru": "Полезные боулы",
-      "tr": "Doyurucu Bowllar"
+      "ru": "Wholesome Bowls",
+      "tr": "Wholesome Bowls"
     },
     "icon": "🥣",
+    "group": "your_selections",
     "items": [
       {
-        "id": "item_brochure_overnight_oats",
+        "id": "item_overnight_oats",
         "name": "Overnight Oats",
         "description": {
-          "en": "Overnight oats from wholesome bowls.",
-          "ru": "Овсянка overnight из раздела боулов.",
-          "tr": "Doyurucu bowl bolumunden overnight oats."
+          "en": "Rolled oats, peanut butter, banana, coconut flakes, cinnamon.",
+          "ru": "Овсяные хлопья, арахисовая паста, банан, кокосовая стружка, корица.",
+          "tr": "Yulaf ezmesi, fistik ezmesi, muz, hindistan cevizi, tarcin."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/classic_pancakes.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_granola",
+        "id": "item_granola_bowl",
         "name": "Granola",
         "description": {
-          "en": "Granola bowl option.",
-          "ru": "Вариант боула с гранолой.",
-          "tr": "Granola bowl secenegi."
+          "en": "Strained village yogurt, fresh strawberries, banana, honey.",
+          "ru": "Процеженный деревенский йогурт, свежая клубника, банан, мед.",
+          "tr": "Suzme koy yogurdu, taze cilek, muz, bal."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [
-          "nuts"
-        ],
-        "calories": 0
+        "image": "/images/dishes/classic_pancakes.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_chia_bowl",
+        "id": "item_chia_bowl",
         "name": "Chia Bowl",
         "description": {
-          "en": "Chia bowl with fruit-based topping.",
-          "ru": "Чиа-боул с фруктовым топпингом.",
-          "tr": "Meyveli ust kaplama ile chia bowl."
+          "en": "Chia seeds, strained village yogurt, strawberries, honey.",
+          "ru": "Семена чиа, процеженный деревенский йогурт, клубника, мед.",
+          "tr": "Chia tohumu, suzme koy yogurdu, cilek, bal."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/classic_pancakes.jpg",
+        "available": true
       }
     ]
   },
   {
-    "id": "beverages_brochure",
-    "name": "Beverages",
+    "id": "tea_selection",
+    "name": "Tea Selection",
     "displayName": {
-      "en": "Beverages",
-      "ru": "Напитки",
-      "tr": "Icecekler"
+      "en": "Tea Selection",
+      "ru": "Tea Selection",
+      "tr": "Tea Selection"
     },
-    "icon": "☕",
+    "icon": "🍵",
+    "group": "beverages",
     "items": [
       {
-        "id": "item_brochure_tea_selection",
-        "name": "Tea Selection",
+        "id": "item_tea_earl_grey",
+        "name": "Earl Grey",
         "description": {
-          "en": "Selection of teas: Earl Grey, English Breakfast, Oolong and Jasmine Green.",
-          "ru": "Чайная подборка: Earl Grey, English Breakfast, Oolong и Jasmine Green.",
-          "tr": "Cay secenegi: Earl Grey, English Breakfast, Oolong ve Jasmine Green."
+          "en": "Premium tea selection.",
+          "ru": "Премиальный чай.",
+          "tr": "Premium cay secimi."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_coffee_selection",
-        "name": "Coffee Selection",
+        "id": "item_tea_english_breakfast",
+        "name": "English Breakfast",
         "description": {
-          "en": "Coffee bar menu: Espresso, Americano, Macchiato, Flat White, Latte, Cappuccino, Cold Brew, Filter Coffee and Turkish Coffee.",
-          "ru": "Кофейная карта: Espresso, Americano, Macchiato, Flat White, Latte, Cappuccino, Cold Brew, Filter Coffee и Turkish Coffee.",
-          "tr": "Kahve secenegi: Espresso, Americano, Macchiato, Flat White, Latte, Cappuccino, Cold Brew, Filter Coffee ve Turkish Coffee."
+          "en": "Premium tea selection.",
+          "ru": "Премиальный чай.",
+          "tr": "Premium cay secimi."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_fresh_natural",
-        "name": "Fresh & Natural",
+        "id": "item_tea_oolong",
+        "name": "Oolong",
         "description": {
-          "en": "Fresh orange juice, fresh pomegranate juice and house-made natural drinks.",
-          "ru": "Свежевыжатый апельсиновый сок, гранатовый сок и фирменные натуральные напитки.",
-          "tr": "Taze portakal suyu, taze nar suyu ve ev yapimi dogal icecekler."
+          "en": "Premium tea selection.",
+          "ru": "Премиальный чай.",
+          "tr": "Premium cay secimi."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
       },
       {
-        "id": "item_brochure_brunch_cocktails",
-        "name": "Brunch Cocktails",
+        "id": "item_tea_jasmine_green",
+        "name": "Jasmine Green",
         "description": {
-          "en": "Brunch cocktails: Bloody Mary, Prosecco, Bellini, Mimosa and signature mixes.",
-          "ru": "Бранч-коктейли: Bloody Mary, Prosecco, Bellini, Mimosa и фирменные миксы.",
-          "tr": "Brunch kokteylleri: Bloody Mary, Prosecco, Bellini, Mimosa ve ozel karisimlar."
+          "en": "Premium tea selection.",
+          "ru": "Премиальный чай.",
+          "tr": "Premium cay secimi."
         },
         "price": 0,
-        "image": "",
-        "available": true,
-        "vegetarian": true,
-        "spicy": 0,
-        "portion": "",
-        "allergens": [],
-        "calories": 0
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      }
+    ]
+  },
+  {
+    "id": "coffee_selection",
+    "name": "Coffee Selection",
+    "displayName": {
+      "en": "Coffee Selection",
+      "ru": "Coffee Selection",
+      "tr": "Coffee Selection"
+    },
+    "icon": "☕",
+    "group": "beverages",
+    "items": [
+      {
+        "id": "item_coffee_espresso",
+        "name": "Espresso",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_coffee_americano",
+        "name": "Americano",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_coffee_macchiato",
+        "name": "Macchiato",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_coffee_flat_white",
+        "name": "Flat White",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_coffee_latte",
+        "name": "Latte",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_coffee_cappuccino",
+        "name": "Cappuccino",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_coffee_cold_brew",
+        "name": "Cold Brew",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_coffee_filter",
+        "name": "Filter Coffee",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_coffee_turkish",
+        "name": "Turkish Coffee",
+        "description": {
+          "en": "Coffee selection.",
+          "ru": "Кофейная карта.",
+          "tr": "Kahve secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      }
+    ]
+  },
+  {
+    "id": "milk_options",
+    "name": "Milk Options",
+    "displayName": {
+      "en": "Milk Options",
+      "ru": "Milk Options",
+      "tr": "Milk Options"
+    },
+    "icon": "🥛",
+    "group": "beverages",
+    "items": [
+      {
+        "id": "item_milk_whole_fat",
+        "name": "Whole Fat / Lactose-Free",
+        "description": {
+          "en": "Milk option for coffee drinks.",
+          "ru": "Вариант молока для кофейных напитков.",
+          "tr": "Kahve icecekleri icin sut secenegi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_milk_almond",
+        "name": "Almond",
+        "description": {
+          "en": "Milk option for coffee drinks.",
+          "ru": "Вариант молока для кофейных напитков.",
+          "tr": "Kahve icecekleri icin sut secenegi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_milk_soy",
+        "name": "Soy",
+        "description": {
+          "en": "Milk option for coffee drinks.",
+          "ru": "Вариант молока для кофейных напитков.",
+          "tr": "Kahve icecekleri icin sut secenegi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      }
+    ]
+  },
+  {
+    "id": "fresh_and_natural",
+    "name": "Fresh & Natural",
+    "displayName": {
+      "en": "Fresh & Natural",
+      "ru": "Fresh & Natural",
+      "tr": "Fresh & Natural"
+    },
+    "icon": "🧃",
+    "group": "beverages",
+    "items": [
+      {
+        "id": "item_fresh_orange_juice",
+        "name": "Fresh Orange Juice",
+        "description": {
+          "en": "Fresh orange juice from our garden.",
+          "ru": "Свежий апельсиновый сок из нашего сада.",
+          "tr": "Bahcemizden taze portakal suyu."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_fresh_pomegranate_juice",
+        "name": "Fresh Pomegranate Juice",
+        "description": {
+          "en": "Fresh pomegranate juice.",
+          "ru": "Свежий гранатовый сок.",
+          "tr": "Taze nar suyu."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_elixir",
+        "name": "Elixir",
+        "description": {
+          "en": "Beetroot, carrot, green apple, ginger, grapefruit, lemon, mint.",
+          "ru": "Свекла, морковь, зеленое яблоко, имбирь, грейпфрут, лимон, мята.",
+          "tr": "Pancar, havuc, yesil elma, zencefil, greyfurt, limon, nane."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_alkali",
+        "name": "Alkali",
+        "description": {
+          "en": "Parsley, celery stalk, lemon, green apple.",
+          "ru": "Петрушка, стебель сельдерея, лимон, зеленое яблоко.",
+          "tr": "Maydanoz, kereviz sapi, limon, yesil elma."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      }
+    ]
+  },
+  {
+    "id": "brunch_cocktails",
+    "name": "Brunch Cocktails",
+    "displayName": {
+      "en": "Brunch Cocktails",
+      "ru": "Brunch Cocktails",
+      "tr": "Brunch Cocktails"
+    },
+    "icon": "🍸",
+    "group": "beverages",
+    "items": [
+      {
+        "id": "item_cocktail_bloody_mary",
+        "name": "Bloody Mary",
+        "description": {
+          "en": "Brunch cocktail selection.",
+          "ru": "Коктейли для бранча.",
+          "tr": "Brunch kokteyl secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_cocktail_mandarin_noon_martini",
+        "name": "Mandarin Noon Martini",
+        "description": {
+          "en": "Brunch cocktail selection.",
+          "ru": "Коктейли для бранча.",
+          "tr": "Brunch kokteyl secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_cocktail_prosecco",
+        "name": "Prosecco",
+        "description": {
+          "en": "Brunch cocktail selection.",
+          "ru": "Коктейли для бранча.",
+          "tr": "Brunch kokteyl secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_cocktail_bellini",
+        "name": "Bellini",
+        "description": {
+          "en": "Brunch cocktail selection.",
+          "ru": "Коктейли для бранча.",
+          "tr": "Brunch kokteyl secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
+      },
+      {
+        "id": "item_cocktail_mimosa",
+        "name": "Mimosa",
+        "description": {
+          "en": "Brunch cocktail selection.",
+          "ru": "Коктейли для бранча.",
+          "tr": "Brunch kokteyl secimi."
+        },
+        "price": 0,
+        "image": "/images/dishes/menemen.jpg",
+        "available": true
       }
     ]
   }

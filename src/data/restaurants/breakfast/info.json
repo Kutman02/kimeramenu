@@ -1,15 +1,15 @@
 {
   "id": "breakfast_place",
-  "name": "Breakfast Palace",
+  "name": "O'LIVES",
   "displayName": {
-    "en": "Breakfast Palace",
-    "ru": "Дворец Завтраков",
-    "tr": "Kahvaltı Sarayı"
+    "en": "O'LIVES",
+    "ru": "O'LIVES",
+    "tr": "O'LIVES"
   },
   "description": {
-    "en": "The finest breakfast experience in the city",
-    "ru": "Лучший завтрак в городе",
-    "tr": "Şehirdeki en iyi kahvaltı deneyimi"
+    "en": "Breakfast is served in two parts: complimentary standard breakfast and optional additions.",
+    "ru": "Завтрак подается в двух частях: бесплатный стандартный завтрак и дополнительные позиции по желанию.",
+    "tr": "Kahvalti iki bolumde sunulur: ucretsiz standart kahvalti ve istege bagli ek urunler."
   },
   "image": "/images/restaurants/breakfast_palace.jpg",
   "address": "123 Morning Street, Breakfast City",

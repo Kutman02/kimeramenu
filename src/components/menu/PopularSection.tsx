@@ -1,17 +1,15 @@
 import { MenuCard } from './MenuCard';
-import type { MenuItem, Language, Allergen } from '../../types/menu';
+import type { MenuItem, Language } from '../../types/menu';
 
 export interface PopularSectionProps {
   items: MenuItem[];
   language: Language;
-  allergens: Allergen[];
   onItemClick?: (item: MenuItem) => void;
 }
 
 export function PopularSection({
   items,
   language,
-  allergens,
   onItemClick,
 }: PopularSectionProps) {
   if (items.length === 0) return null;
@@ -49,7 +47,6 @@ export function PopularSection({
             key={item.id}
             item={item}
             language={language}
-            allergens={allergens}
             onClick={onItemClick}
             isPopular={true}
           />

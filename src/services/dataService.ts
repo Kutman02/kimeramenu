@@ -19,7 +19,7 @@ class DataService {
   private data: MenuData;
 
   constructor() {
-    this.baseData = this.clone(menuData as MenuData);
+    this.baseData = this.applyStructuralDefaults(this.clone(menuData as MenuData));
     this.data = this.clone(this.baseData);
     this.loadDevOverrides();
   }
@@ -40,10 +40,64 @@ class DataService {
       if (!stored) return;
 
       const parsed = JSON.parse(stored) as MenuData;
-      this.data = this.clone(parsed);
+      this.data = this.applyStructuralDefaults(this.clone(parsed));
     } catch (error) {
       console.warn('Failed to load admin data overrides:', error);
     }
+  }
+
+  private applyStructuralDefaults(source: MenuData): MenuData {
+    const next = this.clone(source);
+
+    next.restaurants.forEach((restaurant, restaurantIndex) => {
+      const baseRestaurant =
+        this.baseData?.restaurants.find((candidate) => candidate.id === restaurant.id) ??
+        (this.baseData?.restaurants[restaurantIndex] || null);
+
+      if (!baseRestaurant) return;
+
+      // Ensure complimentary "served to your table" categories exist after schema updates.
+      const requiredBaseCategories = baseRestaurant.categories.filter(
+        (category) => category.group === 'served_to_table'
+      );
+
+      requiredBaseCategories.forEach((baseCategory, insertIndex) => {
+        const exists = restaurant.categories.some((category) => category.id === baseCategory.id);
+        if (!exists) {
+          restaurant.categories.splice(insertIndex, 0, this.clone(baseCategory));
+        }
+      });
+
+      restaurant.categories = restaurant.categories.map((category) => {
+        const baseCategory = baseRestaurant.categories.find(
+          (candidate) => candidate.id === category.id
+        );
+
+        if (!baseCategory) return category;
+
+        return {
+          ...category,
+          group: category.group ?? baseCategory.group,
+          hidden: category.hidden ?? baseCategory.hidden,
+          isComplimentary: category.isComplimentary ?? baseCategory.isComplimentary,
+          items: category.items.map((item) => {
+            const baseItem = baseCategory.items.find((candidate) => candidate.id === item.id);
+            if (!baseItem) return item;
+
+            return {
+              ...item,
+              description:
+                item.id === 'item_served_to_your_table' ? baseItem.description : item.description,
+              isComplimentary: item.isComplimentary ?? baseItem.isComplimentary,
+              includedItems: item.includedItems ?? baseItem.includedItems,
+              includedItemIds: item.includedItemIds ?? baseItem.includedItemIds,
+            };
+          }),
+        };
+      });
+    });
+
+    return next;
   }
 
   private persistDevOverrides() {
@@ -75,7 +129,7 @@ class DataService {
   }
 
   replaceData(nextData: MenuData): void {
-    this.data = this.clone(nextData);
+    this.data = this.applyStructuralDefaults(this.clone(nextData));
     this.persistDevOverrides();
   }
 
