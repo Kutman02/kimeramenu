@@ -167,11 +167,12 @@ function DashboardStat({ label, value, hint }: DashboardStatProps) {
 }
 
 export function AdminPage() {
-  const canEdit = typeof window !== 'undefined';
+  const canEdit = import.meta.env.DEV && typeof window !== 'undefined';
   const initialData = useMemo(() => dataService.getRawData(), []);
 
   const [data, setData] = useState<MenuData>(initialData);
   const [status, setStatus] = useState('Готово к редактированию.');
+  const [isSaving, setIsSaving] = useState(false);
   const [activeCategoryId, setActiveCategoryId] = useState(initialData.restaurants[0]?.categories[0]?.id ?? '');
   const [itemsCategoryId, setItemsCategoryId] = useState<string>(ALL_CATEGORIES_VALUE);
   const [itemSearch, setItemSearch] = useState('');
@@ -184,7 +185,7 @@ export function AdminPage() {
   );
 
   const restaurant = data.restaurants[0] ?? null;
-  const categories = restaurant?.categories ?? [];
+  const categories = useMemo(() => restaurant?.categories ?? [], [restaurant]);
   const supportedLanguages = data.supportedLanguages.length ? data.supportedLanguages : ALL_LANGUAGES;
 
   const activeCategoryIndex = categories.findIndex((category) => category.id === activeCategoryId);
@@ -578,15 +579,29 @@ export function AdminPage() {
     e.currentTarget.value = '';
   };
 
-  const handleSave = () => {
-    if (!canEdit) return;
-    dataService.replaceData(data);
-    setJsonEditorText(JSON.stringify(data, null, 2));
-    setStatus('Изменения сохранены в localStorage (dev).');
+  const handleSave = async () => {
+    if (!canEdit || isSaving) return;
+
+    setIsSaving(true);
+    setStatus('Сохраняем изменения в JSON-файлы проекта...');
+
+    try {
+      const result = await dataService.saveToProjectFiles(data);
+      setJsonEditorText(JSON.stringify(data, null, 2));
+      setStatus(result.message);
+    } catch (error) {
+      setStatus(
+        error instanceof Error
+          ? `Ошибка сохранения JSON: ${error.message}`
+          : 'Ошибка сохранения JSON-файлов проекта.'
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleReset = () => {
-    if (!canEdit) return;
+    if (!canEdit || isSaving) return;
 
     const baseData = dataService.getBaseData();
     setData(baseData);
@@ -618,7 +633,7 @@ export function AdminPage() {
       setCategoryEditor(null);
       setItemEditor(null);
       setItemSearch('');
-      setStatus('JSON применён. Нажмите «Сохранить», чтобы записать в localStorage.');
+      setStatus('JSON применён. Нажмите «Сохранить», чтобы записать в JSON-файлы проекта.');
     } catch {
       setStatus('Ошибка JSON: проверьте синтаксис перед применением.');
     }
@@ -820,10 +835,10 @@ export function AdminPage() {
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={!canEdit}
+                  disabled={!canEdit || isSaving}
                   className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                 >
-                  Сохранить профиль
+                  {isSaving ? 'Сохраняем...' : 'Сохранить профиль'}
                 </button>
               </div>
 
@@ -924,10 +939,10 @@ export function AdminPage() {
                   <button
                     type="button"
                     onClick={handleSave}
-                    disabled={!canEdit}
+                    disabled={!canEdit || isSaving}
                     className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100"
                   >
-                    Сохранить изменения
+                    {isSaving ? 'Сохраняем...' : 'Сохранить изменения'}
                   </button>
                 </div>
               </div>
@@ -1100,10 +1115,10 @@ export function AdminPage() {
                   <button
                     type="button"
                     onClick={handleSave}
-                    disabled={!canEdit}
+                    disabled={!canEdit || isSaving}
                     className="h-10 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100"
                   >
-                    Сохранить
+                    {isSaving ? 'Сохраняем...' : 'Сохранить'}
                   </button>
                 </div>
               </div>
@@ -1212,15 +1227,15 @@ export function AdminPage() {
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={!canEdit}
+                  disabled={!canEdit || isSaving}
                   className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                 >
-                  Сохранить (Dev Local)
+                  {isSaving ? 'Сохраняем...' : 'Сохранить в JSON проекта'}
                 </button>
                 <button
                   type="button"
                   onClick={handleReset}
-                  disabled={!canEdit}
+                  disabled={!canEdit || isSaving}
                   className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-100"
                 >
                   Сбросить к JSON
@@ -1242,7 +1257,7 @@ export function AdminPage() {
                   <div>
                     <h3 className="text-sm font-semibold text-slate-800">Raw JSON редактор</h3>
                     <p className="text-xs text-slate-500">
-                      Полный контроль над данными. После применения нажмите «Сохранить (Dev Local)».
+                      Полный контроль над данными. После применения нажмите «Сохранить в JSON проекта».
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">

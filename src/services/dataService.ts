@@ -7,7 +7,17 @@ import type {
   Language,
 } from '../types/menu';
 
-const DEV_ADMIN_STORAGE_KEY = 'kimeramenu.admin.data.v1';
+const DEV_MENU_SYNC_ENDPOINT = '/__admin/menu-data';
+
+type MenuSyncResponse = {
+  ok?: boolean;
+  message?: string;
+};
+
+export type SaveMenuDataResult = {
+  ok: boolean;
+  message: string;
+};
 
 /**
  * Data Service для работы с меню ресторана
@@ -21,7 +31,6 @@ class DataService {
   constructor() {
     this.baseData = this.applyStructuralDefaults(this.clone(menuData as MenuData));
     this.data = this.clone(this.baseData);
-    this.loadDevOverrides();
   }
 
   private clone<T>(value: T): T {
@@ -30,20 +39,6 @@ class DataService {
 
   private isDevBrowser(): boolean {
     return import.meta.env.DEV && typeof window !== 'undefined';
-  }
-
-  private loadDevOverrides() {
-    if (!this.isDevBrowser()) return;
-
-    try {
-      const stored = window.localStorage.getItem(DEV_ADMIN_STORAGE_KEY);
-      if (!stored) return;
-
-      const parsed = JSON.parse(stored) as MenuData;
-      this.data = this.applyStructuralDefaults(this.clone(parsed));
-    } catch (error) {
-      console.warn('Failed to load admin data overrides:', error);
-    }
   }
 
   private applyStructuralDefaults(source: MenuData): MenuData {
@@ -87,19 +82,6 @@ class DataService {
     return next;
   }
 
-  private persistDevOverrides() {
-    if (!this.isDevBrowser()) return;
-
-    try {
-      window.localStorage.setItem(
-        DEV_ADMIN_STORAGE_KEY,
-        JSON.stringify(this.data)
-      );
-    } catch (error) {
-      console.warn('Failed to persist admin data overrides:', error);
-    }
-  }
-
   /**
    * Получить все поддерживаемые языки
    */
@@ -117,15 +99,57 @@ class DataService {
 
   replaceData(nextData: MenuData): void {
     this.data = this.applyStructuralDefaults(this.clone(nextData));
-    this.persistDevOverrides();
+  }
+
+  async saveToProjectFiles(nextData: MenuData): Promise<SaveMenuDataResult> {
+    this.replaceData(nextData);
+
+    if (!this.isDevBrowser()) {
+      return {
+        ok: false,
+        message: 'Сохранение в JSON-файлы доступно только в dev-режиме.',
+      };
+    }
+
+    try {
+      const response = await fetch(DEV_MENU_SYNC_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.data),
+      });
+
+      const payload = (await response.json().catch(() => null)) as MenuSyncResponse | null;
+      const fallbackMessage = response.ok
+        ? 'Изменения сохранены в JSON-файлы проекта.'
+        : 'Не удалось сохранить изменения в JSON-файлы проекта.';
+      const message = typeof payload?.message === 'string' ? payload.message : fallbackMessage;
+
+      if (!response.ok) {
+        return {
+          ok: false,
+          message,
+        };
+      }
+
+      return {
+        ok: true,
+        message,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        message:
+          error instanceof Error
+            ? `Ошибка сохранения JSON: ${error.message}`
+            : 'Ошибка сохранения JSON-файлов проекта.',
+      };
+    }
   }
 
   resetToBaseData(): void {
     this.data = this.clone(this.baseData);
-
-    if (this.isDevBrowser()) {
-      window.localStorage.removeItem(DEV_ADMIN_STORAGE_KEY);
-    }
   }
 
   /**
