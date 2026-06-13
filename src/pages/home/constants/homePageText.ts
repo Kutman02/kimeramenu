@@ -67,9 +67,9 @@ export const HOME_PAGE_TEXT = {
     tr: 'Ek Yemekler ve Icecekler',
   },
   yourSelectionsTitle: {
-    en: 'YOUR SELECTIONS',
-    ru: 'ВАШ ВЫБОР',
-    tr: 'SECIMLERINIZ',
+    en: '+ Your choice',
+    ru: '+ На ваш выбор',
+    tr: '+ Seciminize gore',
   },
   beveragesTitle: {
     en: 'BEVERAGES',

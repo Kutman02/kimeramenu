@@ -7,6 +7,58 @@ export interface MenuCategoryProps {
   onItemClick?: (item: MenuItem) => void;
 }
 
+const getRussianPluralForm = (
+  value: number,
+  forms: readonly [one: string, few: string, many: string]
+) => {
+  const normalizedValue = Math.abs(value) % 100;
+  const lastDigit = normalizedValue % 10;
+
+  if (normalizedValue >= 11 && normalizedValue <= 14) return forms[2];
+  if (lastDigit === 1) return forms[0];
+  if (lastDigit >= 2 && lastDigit <= 4) return forms[1];
+  return forms[2];
+};
+
+const getCountLabel = (count: number, language: Language, group?: MenuCategoryType['group']) => {
+  const isBeverageCategory = group === 'beverages';
+
+  if (language === 'ru') {
+    const word = isBeverageCategory
+      ? getRussianPluralForm(count, ['напиток', 'напитка', 'напитков'])
+      : getRussianPluralForm(count, ['позиция', 'позиции', 'позиций']);
+    return `${count} ${word} доступно`;
+  }
+
+  if (language === 'en') {
+    if (isBeverageCategory) return `${count} ${count === 1 ? 'drink' : 'drinks'} available`;
+    return `${count} ${count === 1 ? 'item' : 'items'} available`;
+  }
+
+  if (isBeverageCategory) return `${count} icecek mevcut`;
+  return `${count} urun mevcut`;
+};
+
+const getEmptyLabel = (language: Language, group?: MenuCategoryType['group']) => {
+  const isBeverageCategory = group === 'beverages';
+
+  if (language === 'ru') {
+    return isBeverageCategory
+      ? 'В этой категории пока нет доступных напитков'
+      : 'В этой категории пока нет доступных позиций';
+  }
+
+  if (language === 'en') {
+    return isBeverageCategory
+      ? 'No drinks available in this category'
+      : 'No items available in this category';
+  }
+
+  return isBeverageCategory
+    ? 'Bu kategoride su an icecek yok'
+    : 'Bu kategoride su an urun yok';
+};
+
 export function MenuCategory({
   category,
   language,
@@ -14,18 +66,6 @@ export function MenuCategory({
 }: MenuCategoryProps) {
   // Filter available items
   const availableItems = category.items.filter((item) => item.available);
-  const labels = {
-    count: {
-      en: (n: number) => `${n} ${n === 1 ? 'dish' : 'dishes'} available`,
-      ru: (n: number) => `${n} ${n === 1 ? 'блюдо' : 'блюд'} доступно`,
-      tr: (n: number) => `${n} ${n === 1 ? 'urun' : 'urun'} mevcut`,
-    },
-    empty: {
-      en: 'No dishes available in this category',
-      ru: 'В этой категории пока нет доступных блюд',
-      tr: 'Bu kategoride su an urun yok',
-    },
-  } as const;
 
   return (
     <section id={`cat-${category.id}`} className="mb-10 scroll-mt-24 sm:scroll-mt-28 sm:mb-12">
@@ -37,7 +77,9 @@ export function MenuCategory({
             {category.displayName[language] || category.displayName.en}
           </h2>
         </div>
-        <p className="text-sm text-gray-500">{labels.count[language](availableItems.length)}</p>
+        <p className="text-sm text-gray-500">
+          {getCountLabel(availableItems.length, language, category.group)}
+        </p>
       </div>
 
       {/* Compact list for faster scanning */}
@@ -54,7 +96,7 @@ export function MenuCategory({
 
       {availableItems.length === 0 && (
         <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-100">
-          <p className="text-gray-500 text-lg">{labels.empty[language]}</p>
+          <p className="text-gray-500 text-lg">{getEmptyLabel(language, category.group)}</p>
         </div>
       )}
     </section>

@@ -92,15 +92,15 @@ export function ItemDetailsModal({
         </p>
 
         {relatedItems.length > 0 && (
-          <section className="mb-4">
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-600">
+          <section className="mb-4 rounded-2xl border border-sky-200/80 bg-sky-100/45 p-3 sm:p-4">
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-sky-800">
               {HOME_PAGE_TEXT.includedItemsTitle[currentLanguage]}
             </h3>
             <div className="space-y-3">
               {relatedItems.map((relatedItem, index) => (
                 <div
                   key={relatedItem.id}
-                  className="animate-soft-rise-in"
+                  className="animate-soft-rise-in rounded-2xl bg-sky-200/35 p-1.5"
                   style={{ animationDelay: `${Math.min(index * 45, 220)}ms` }}
                 >
                   <MenuCard
