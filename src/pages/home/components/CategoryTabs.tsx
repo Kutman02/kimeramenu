@@ -10,6 +10,14 @@ interface CategoryTabsProps {
   onCategorySelect: (categoryId: string) => void;
 }
 
+const getCategoryTabLabel = (category: MenuCategory, currentLanguage: Language) => {
+  if (category.id === 'organic_eggs') {
+    return 'Organic Eggs';
+  }
+
+  return category.displayName[currentLanguage] || category.displayName.en;
+};
+
 export function CategoryTabs({
   categories,
   currentLanguage,
@@ -41,7 +49,7 @@ export function CategoryTabs({
               }`}
             >
               {category.icon ? `${category.icon} ` : ''}
-              {category.displayName[currentLanguage] || category.displayName.en}
+              {getCategoryTabLabel(category, currentLanguage)}
               <span className="ml-1 text-xs opacity-80">({category.items.length})</span>
             </button>
           ))}
