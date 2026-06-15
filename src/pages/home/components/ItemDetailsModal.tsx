@@ -11,6 +11,7 @@ interface ItemDetailsModalProps {
   modalBodyRef: MutableRefObject<HTMLDivElement | null>;
   sheetTranslateY: number;
   isDraggingSheet: boolean;
+  isOpeningSheet: boolean;
   onClose: () => void;
   onRelatedItemClick: (item: MenuItem) => void;
   onTouchStart: (e: TouchEvent<HTMLDivElement>) => void;
@@ -25,6 +26,7 @@ export function ItemDetailsModal({
   modalBodyRef,
   sheetTranslateY,
   isDraggingSheet,
+  isOpeningSheet,
   onClose,
   onRelatedItemClick,
   onTouchStart,
@@ -34,13 +36,31 @@ export function ItemDetailsModal({
   if (!selectedItem) return null;
 
   const imageSrc = selectedItem.image?.trim() ? selectedItem.image : fallbackDishImage;
-  const sheetOpacity = isDraggingSheet ? Math.max(0.84, 1 - sheetTranslateY / 450) : 1;
-  const backdropOpacity = isDraggingSheet ? Math.max(0.2, 0.35 - sheetTranslateY / 700) : 0.35;
+  const maxBackdropOpacity = 0.35;
+  const maxOpenTranslate = 560;
+  const normalizedTranslate = Math.min(Math.max(sheetTranslateY / maxOpenTranslate, 0), 1);
+  const openProgress = 1 - normalizedTranslate;
+  const openingBackdropProgress = Math.pow(openProgress, 1.8);
+  const staticBackdropProgress = Math.max(openProgress, 0.88);
+  const sheetOpacity = isDraggingSheet
+    ? Math.max(0.84, 1 - sheetTranslateY / 450)
+    : Math.max(0.94, 1 - sheetTranslateY / 900);
+  const backdropOpacity = isDraggingSheet
+    ? Math.max(0.2, maxBackdropOpacity - sheetTranslateY / 700)
+    : maxBackdropOpacity *
+      (isOpeningSheet ? openingBackdropProgress : staticBackdropProgress);
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm animate-fade-in"
-      style={{ backgroundColor: `rgba(15, 23, 42, ${backdropOpacity})` }}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center backdrop-blur-sm"
+      style={{
+        backgroundColor: `rgba(15, 23, 42, ${backdropOpacity})`,
+        transition: isDraggingSheet
+          ? 'none'
+          : isOpeningSheet
+            ? 'background-color 360ms cubic-bezier(0.22, 1, 0.36, 1) 55ms'
+            : 'background-color 240ms ease-out',
+      }}
     >
       <div
         ref={modalBodyRef}
@@ -53,7 +73,7 @@ export function ItemDetailsModal({
           opacity: sheetOpacity,
           transition: isDraggingSheet
             ? 'none'
-            : 'transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1)',
+            : 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms cubic-bezier(0.22, 1, 0.36, 1)',
         }}
         className="relative h-[96vh] w-screen overflow-y-auto overscroll-contain rounded-t-3xl border border-white/40 bg-white/78 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.28)] sm:h-[92vh] sm:max-w-3xl sm:rounded-3xl sm:p-6"
       >

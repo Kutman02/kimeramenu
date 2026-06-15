@@ -79,6 +79,7 @@ export function HomePage() {
     selectedItem,
     sheetTranslateY,
     isDraggingSheet,
+    isOpeningSheet,
     modalBodyRef,
     openItemDetails,
     openRelatedItemDetails,
@@ -235,6 +236,7 @@ export function HomePage() {
           modalBodyRef={modalBodyRef}
           sheetTranslateY={sheetTranslateY}
           isDraggingSheet={isDraggingSheet}
+          isOpeningSheet={isOpeningSheet}
           onClose={closeItemDetails}
           onRelatedItemClick={openRelatedItemDetails}
           onTouchStart={handleModalTouchStart}

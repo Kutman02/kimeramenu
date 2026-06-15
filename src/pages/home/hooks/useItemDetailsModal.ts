@@ -4,21 +4,25 @@ import type { MenuItem } from '../../../types/menu';
 const DRAG_CLOSE_THRESHOLD = 150;
 const DRAG_MAX_TRANSLATE = 260;
 const DRAG_RESISTANCE = 0.85;
+const OPEN_ANIMATION_DURATION_MS = 360;
 
 export function useItemDetailsModal() {
   const [itemStack, setItemStack] = useState<MenuItem[]>([]);
   const [sheetTranslateY, setSheetTranslateY] = useState(0);
   const [isDraggingSheet, setIsDraggingSheet] = useState(false);
+  const [isOpeningSheet, setIsOpeningSheet] = useState(false);
   const modalBodyRef = useRef<HTMLDivElement | null>(null);
   const touchStartYRef = useRef<number | null>(null);
   const touchStartScrollTopRef = useRef(0);
   const openAnimationFrameRef = useRef<number | null>(null);
+  const openAnimationTimeoutRef = useRef<number | null>(null);
 
   const selectedItem = itemStack[itemStack.length - 1] ?? null;
 
   const resetSheet = useCallback(() => {
     setSheetTranslateY(0);
     setIsDraggingSheet(false);
+    setIsOpeningSheet(false);
   }, []);
 
   const cancelOpenAnimation = useCallback(() => {
@@ -29,6 +33,14 @@ export function useItemDetailsModal() {
     openAnimationFrameRef.current = null;
   }, []);
 
+  const cancelOpenAnimationTimeout = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (openAnimationTimeoutRef.current == null) return;
+
+    window.clearTimeout(openAnimationTimeoutRef.current);
+    openAnimationTimeoutRef.current = null;
+  }, []);
+
   const startOpenFromBottomAnimation = useCallback(() => {
     if (typeof window === 'undefined') {
       resetSheet();
@@ -36,15 +48,21 @@ export function useItemDetailsModal() {
     }
 
     cancelOpenAnimation();
+    cancelOpenAnimationTimeout();
     const startTranslate = Math.min(Math.max(window.innerHeight * 0.68, 300), 560);
+    setIsOpeningSheet(true);
     setIsDraggingSheet(false);
     setSheetTranslateY(startTranslate);
 
     openAnimationFrameRef.current = window.requestAnimationFrame(() => {
       setSheetTranslateY(0);
       openAnimationFrameRef.current = null;
+      openAnimationTimeoutRef.current = window.setTimeout(() => {
+        setIsOpeningSheet(false);
+        openAnimationTimeoutRef.current = null;
+      }, OPEN_ANIMATION_DURATION_MS);
     });
-  }, [cancelOpenAnimation, resetSheet]);
+  }, [cancelOpenAnimation, cancelOpenAnimationTimeout, resetSheet]);
 
   const openItemDetails = useCallback(
     (item: MenuItem) => {
@@ -68,9 +86,10 @@ export function useItemDetailsModal() {
 
   const closeItemDetails = useCallback(() => {
     cancelOpenAnimation();
+    cancelOpenAnimationTimeout();
     resetSheet();
     setItemStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : []));
-  }, [cancelOpenAnimation, resetSheet]);
+  }, [cancelOpenAnimation, cancelOpenAnimationTimeout, resetSheet]);
 
   const handleModalTouchStart = useCallback((e: TouchEvent<HTMLDivElement>) => {
     const body = modalBodyRef.current;
@@ -167,14 +186,16 @@ export function useItemDetailsModal() {
   useEffect(
     () => () => {
       cancelOpenAnimation();
+      cancelOpenAnimationTimeout();
     },
-    [cancelOpenAnimation]
+    [cancelOpenAnimation, cancelOpenAnimationTimeout]
   );
 
   return {
     selectedItem,
     sheetTranslateY,
     isDraggingSheet,
+    isOpeningSheet,
     modalBodyRef,
     openItemDetails,
     openRelatedItemDetails,
