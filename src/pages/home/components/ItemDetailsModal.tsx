@@ -12,6 +12,8 @@ interface ItemDetailsModalProps {
   sheetTranslateY: number;
   isDraggingSheet: boolean;
   isOpeningSheet: boolean;
+  isClosingSheet: boolean;
+  isPreparingOpenPosition: boolean;
   onClose: () => void;
   onRelatedItemClick: (item: MenuItem) => void;
   onTouchStart: (e: TouchEvent<HTMLDivElement>) => void;
@@ -27,6 +29,8 @@ export function ItemDetailsModal({
   sheetTranslateY,
   isDraggingSheet,
   isOpeningSheet,
+  isClosingSheet,
+  isPreparingOpenPosition,
   onClose,
   onRelatedItemClick,
   onTouchStart,
@@ -41,14 +45,21 @@ export function ItemDetailsModal({
   const normalizedTranslate = Math.min(Math.max(sheetTranslateY / maxOpenTranslate, 0), 1);
   const openProgress = 1 - normalizedTranslate;
   const openingBackdropProgress = Math.pow(openProgress, 1.8);
+  const closingBackdropProgress = Math.pow(openProgress, 1.2);
   const staticBackdropProgress = Math.max(openProgress, 0.88);
   const sheetOpacity = isDraggingSheet
     ? Math.max(0.84, 1 - sheetTranslateY / 450)
+    : isClosingSheet
+      ? Math.max(0.78, 1 - sheetTranslateY / 420)
     : Math.max(0.94, 1 - sheetTranslateY / 900);
   const backdropOpacity = isDraggingSheet
     ? Math.max(0.2, maxBackdropOpacity - sheetTranslateY / 700)
     : maxBackdropOpacity *
-      (isOpeningSheet ? openingBackdropProgress : staticBackdropProgress);
+      (isOpeningSheet
+        ? openingBackdropProgress
+        : isClosingSheet
+          ? closingBackdropProgress
+          : staticBackdropProgress);
 
   return (
     <div
@@ -59,6 +70,8 @@ export function ItemDetailsModal({
           ? 'none'
           : isOpeningSheet
             ? 'background-color 360ms cubic-bezier(0.22, 1, 0.36, 1) 55ms'
+            : isClosingSheet
+              ? 'background-color 240ms ease-in'
             : 'background-color 240ms ease-out',
       }}
     >
@@ -71,7 +84,7 @@ export function ItemDetailsModal({
         style={{
           transform: `translateY(${sheetTranslateY}px)`,
           opacity: sheetOpacity,
-          transition: isDraggingSheet
+          transition: isDraggingSheet || isPreparingOpenPosition
             ? 'none'
             : 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms cubic-bezier(0.22, 1, 0.36, 1)',
         }}

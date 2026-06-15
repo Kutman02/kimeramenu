@@ -5,17 +5,24 @@ const DRAG_CLOSE_THRESHOLD = 150;
 const DRAG_MAX_TRANSLATE = 260;
 const DRAG_RESISTANCE = 0.85;
 const OPEN_ANIMATION_DURATION_MS = 360;
+const CLOSE_ANIMATION_DURATION_MS = 280;
+const getSheetAnimationTranslate = (viewportHeight: number) =>
+  Math.min(Math.max(viewportHeight * 0.68, 300), 560);
 
 export function useItemDetailsModal() {
   const [itemStack, setItemStack] = useState<MenuItem[]>([]);
   const [sheetTranslateY, setSheetTranslateY] = useState(0);
   const [isDraggingSheet, setIsDraggingSheet] = useState(false);
   const [isOpeningSheet, setIsOpeningSheet] = useState(false);
+  const [isClosingSheet, setIsClosingSheet] = useState(false);
+  const [isPreparingOpenPosition, setIsPreparingOpenPosition] = useState(false);
   const modalBodyRef = useRef<HTMLDivElement | null>(null);
   const touchStartYRef = useRef<number | null>(null);
   const touchStartScrollTopRef = useRef(0);
   const openAnimationFrameRef = useRef<number | null>(null);
   const openAnimationTimeoutRef = useRef<number | null>(null);
+  const closeAnimationFrameRef = useRef<number | null>(null);
+  const closeAnimationTimeoutRef = useRef<number | null>(null);
 
   const selectedItem = itemStack[itemStack.length - 1] ?? null;
 
@@ -23,6 +30,8 @@ export function useItemDetailsModal() {
     setSheetTranslateY(0);
     setIsDraggingSheet(false);
     setIsOpeningSheet(false);
+    setIsClosingSheet(false);
+    setIsPreparingOpenPosition(false);
   }, []);
 
   const cancelOpenAnimation = useCallback(() => {
@@ -41,6 +50,22 @@ export function useItemDetailsModal() {
     openAnimationTimeoutRef.current = null;
   }, []);
 
+  const cancelCloseAnimation = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (closeAnimationFrameRef.current == null) return;
+
+    window.cancelAnimationFrame(closeAnimationFrameRef.current);
+    closeAnimationFrameRef.current = null;
+  }, []);
+
+  const cancelCloseAnimationTimeout = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    if (closeAnimationTimeoutRef.current == null) return;
+
+    window.clearTimeout(closeAnimationTimeoutRef.current);
+    closeAnimationTimeoutRef.current = null;
+  }, []);
+
   const startOpenFromBottomAnimation = useCallback(() => {
     if (typeof window === 'undefined') {
       resetSheet();
@@ -49,12 +74,17 @@ export function useItemDetailsModal() {
 
     cancelOpenAnimation();
     cancelOpenAnimationTimeout();
-    const startTranslate = Math.min(Math.max(window.innerHeight * 0.68, 300), 560);
+    cancelCloseAnimation();
+    cancelCloseAnimationTimeout();
+    const startTranslate = getSheetAnimationTranslate(window.innerHeight);
     setIsOpeningSheet(true);
+    setIsClosingSheet(false);
     setIsDraggingSheet(false);
+    setIsPreparingOpenPosition(true);
     setSheetTranslateY(startTranslate);
 
     openAnimationFrameRef.current = window.requestAnimationFrame(() => {
+      setIsPreparingOpenPosition(false);
       setSheetTranslateY(0);
       openAnimationFrameRef.current = null;
       openAnimationTimeoutRef.current = window.setTimeout(() => {
@@ -62,7 +92,51 @@ export function useItemDetailsModal() {
         openAnimationTimeoutRef.current = null;
       }, OPEN_ANIMATION_DURATION_MS);
     });
-  }, [cancelOpenAnimation, cancelOpenAnimationTimeout, resetSheet]);
+  }, [
+    cancelCloseAnimation,
+    cancelCloseAnimationTimeout,
+    cancelOpenAnimation,
+    cancelOpenAnimationTimeout,
+    resetSheet,
+  ]);
+
+  const startCloseToBottomAnimation = useCallback(
+    (onComplete?: () => void) => {
+      if (typeof window === 'undefined') {
+        onComplete?.();
+        resetSheet();
+        return;
+      }
+
+      cancelOpenAnimation();
+      cancelOpenAnimationTimeout();
+      cancelCloseAnimation();
+      cancelCloseAnimationTimeout();
+
+      setIsOpeningSheet(false);
+      setIsClosingSheet(true);
+      setIsDraggingSheet(false);
+
+      const closeTranslate = getSheetAnimationTranslate(window.innerHeight);
+
+      closeAnimationFrameRef.current = window.requestAnimationFrame(() => {
+        setSheetTranslateY(closeTranslate);
+        closeAnimationFrameRef.current = null;
+        closeAnimationTimeoutRef.current = window.setTimeout(() => {
+          onComplete?.();
+          resetSheet();
+          closeAnimationTimeoutRef.current = null;
+        }, CLOSE_ANIMATION_DURATION_MS);
+      });
+    },
+    [
+      cancelCloseAnimation,
+      cancelCloseAnimationTimeout,
+      cancelOpenAnimation,
+      cancelOpenAnimationTimeout,
+      resetSheet,
+    ]
+  );
 
   const openItemDetails = useCallback(
     (item: MenuItem) => {
@@ -74,22 +148,28 @@ export function useItemDetailsModal() {
 
   const openRelatedItemDetails = useCallback(
     (item: MenuItem) => {
-      resetSheet();
+      if (selectedItem?.id === item.id) return;
+
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTop = 0;
+      }
+
+      startOpenFromBottomAnimation();
       setItemStack((prev) => {
         if (!prev.length) return [item];
-        if (prev[prev.length - 1]?.id === item.id) return prev;
         return [...prev, item];
       });
     },
-    [resetSheet]
+    [selectedItem, startOpenFromBottomAnimation]
   );
 
   const closeItemDetails = useCallback(() => {
-    cancelOpenAnimation();
-    cancelOpenAnimationTimeout();
-    resetSheet();
-    setItemStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : []));
-  }, [cancelOpenAnimation, cancelOpenAnimationTimeout, resetSheet]);
+    if (!selectedItem || isClosingSheet) return;
+
+    startCloseToBottomAnimation(() => {
+      setItemStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : []));
+    });
+  }, [isClosingSheet, selectedItem, startCloseToBottomAnimation]);
 
   const handleModalTouchStart = useCallback((e: TouchEvent<HTMLDivElement>) => {
     const body = modalBodyRef.current;
@@ -187,8 +267,15 @@ export function useItemDetailsModal() {
     () => () => {
       cancelOpenAnimation();
       cancelOpenAnimationTimeout();
+      cancelCloseAnimation();
+      cancelCloseAnimationTimeout();
     },
-    [cancelOpenAnimation, cancelOpenAnimationTimeout]
+    [
+      cancelCloseAnimation,
+      cancelCloseAnimationTimeout,
+      cancelOpenAnimation,
+      cancelOpenAnimationTimeout,
+    ]
   );
 
   return {
@@ -196,6 +283,8 @@ export function useItemDetailsModal() {
     sheetTranslateY,
     isDraggingSheet,
     isOpeningSheet,
+    isClosingSheet,
+    isPreparingOpenPosition,
     modalBodyRef,
     openItemDetails,
     openRelatedItemDetails,

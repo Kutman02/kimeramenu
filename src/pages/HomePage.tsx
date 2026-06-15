@@ -80,6 +80,8 @@ export function HomePage() {
     sheetTranslateY,
     isDraggingSheet,
     isOpeningSheet,
+    isClosingSheet,
+    isPreparingOpenPosition,
     modalBodyRef,
     openItemDetails,
     openRelatedItemDetails,
@@ -237,6 +239,8 @@ export function HomePage() {
           sheetTranslateY={sheetTranslateY}
           isDraggingSheet={isDraggingSheet}
           isOpeningSheet={isOpeningSheet}
+          isClosingSheet={isClosingSheet}
+          isPreparingOpenPosition={isPreparingOpenPosition}
           onClose={closeItemDetails}
           onRelatedItemClick={openRelatedItemDetails}
           onTouchStart={handleModalTouchStart}
