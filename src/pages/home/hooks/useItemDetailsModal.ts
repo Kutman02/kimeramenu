@@ -6,6 +6,7 @@ const DRAG_MAX_TRANSLATE = 260;
 const DRAG_RESISTANCE = 0.85;
 const OPEN_ANIMATION_DURATION_MS = 360;
 const CLOSE_ANIMATION_DURATION_MS = 280;
+const IMAGE_WARMUP_TIMEOUT_MS = 140;
 const getSheetAnimationTranslate = (viewportHeight: number) =>
   Math.min(Math.max(viewportHeight * 0.68, 300), 560);
 
@@ -23,6 +24,8 @@ export function useItemDetailsModal() {
   const openAnimationTimeoutRef = useRef<number | null>(null);
   const closeAnimationFrameRef = useRef<number | null>(null);
   const closeAnimationTimeoutRef = useRef<number | null>(null);
+  const imageCacheRef = useRef(new Set<string>());
+  const openRequestIdRef = useRef(0);
 
   const selectedItem = itemStack[itemStack.length - 1] ?? null;
 
@@ -65,6 +68,52 @@ export function useItemDetailsModal() {
     window.clearTimeout(closeAnimationTimeoutRef.current);
     closeAnimationTimeoutRef.current = null;
   }, []);
+
+  const preloadImage = useCallback((src?: string) => {
+    const normalizedSrc = src?.trim() ?? '';
+    if (!normalizedSrc || typeof window === 'undefined') return Promise.resolve();
+    if (imageCacheRef.current.has(normalizedSrc)) return Promise.resolve();
+
+    return new Promise<void>((resolve) => {
+      const image = new Image();
+      let isResolved = false;
+
+      const finish = (isLoaded: boolean) => {
+        if (isResolved) return;
+        isResolved = true;
+
+        if (isLoaded) {
+          imageCacheRef.current.add(normalizedSrc);
+        }
+
+        resolve();
+      };
+
+      image.onload = () => finish(true);
+      image.onerror = () => finish(false);
+      image.src = normalizedSrc;
+
+      if (image.complete) {
+        finish(true);
+      }
+    });
+  }, []);
+
+  const warmImageBeforeOpen = useCallback(
+    (src?: string) => {
+      const normalizedSrc = src?.trim() ?? '';
+      if (!normalizedSrc || typeof window === 'undefined') return Promise.resolve();
+      if (imageCacheRef.current.has(normalizedSrc)) return Promise.resolve();
+
+      return Promise.race([
+        preloadImage(normalizedSrc),
+        new Promise<void>((resolve) => {
+          window.setTimeout(resolve, IMAGE_WARMUP_TIMEOUT_MS);
+        }),
+      ]);
+    },
+    [preloadImage]
+  );
 
   const startOpenFromBottomAnimation = useCallback(() => {
     if (typeof window === 'undefined') {
@@ -140,31 +189,48 @@ export function useItemDetailsModal() {
 
   const openItemDetails = useCallback(
     (item: MenuItem) => {
-      startOpenFromBottomAnimation();
-      setItemStack([item]);
+      const requestId = ++openRequestIdRef.current;
+
+      const commitOpen = () => {
+        if (openRequestIdRef.current !== requestId) return;
+
+        startOpenFromBottomAnimation();
+        setItemStack([item]);
+      };
+
+      void warmImageBeforeOpen(item.image).then(commitOpen);
     },
-    [startOpenFromBottomAnimation]
+    [startOpenFromBottomAnimation, warmImageBeforeOpen]
   );
 
   const openRelatedItemDetails = useCallback(
     (item: MenuItem) => {
       if (selectedItem?.id === item.id) return;
 
-      if (modalBodyRef.current) {
-        modalBodyRef.current.scrollTop = 0;
-      }
+      const requestId = ++openRequestIdRef.current;
 
-      startOpenFromBottomAnimation();
-      setItemStack((prev) => {
-        if (!prev.length) return [item];
-        return [...prev, item];
-      });
+      const commitOpen = () => {
+        if (openRequestIdRef.current !== requestId) return;
+
+        if (modalBodyRef.current) {
+          modalBodyRef.current.scrollTop = 0;
+        }
+
+        startOpenFromBottomAnimation();
+        setItemStack((prev) => {
+          if (!prev.length) return [item];
+          return [...prev, item];
+        });
+      };
+
+      void warmImageBeforeOpen(item.image).then(commitOpen);
     },
-    [selectedItem, startOpenFromBottomAnimation]
+    [selectedItem, startOpenFromBottomAnimation, warmImageBeforeOpen]
   );
 
   const closeItemDetails = useCallback(() => {
     if (!selectedItem || isClosingSheet) return;
+    openRequestIdRef.current += 1;
 
     startCloseToBottomAnimation(() => {
       setItemStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : []));

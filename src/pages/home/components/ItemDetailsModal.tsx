@@ -114,7 +114,10 @@ export function ItemDetailsModal({
         <img
           src={imageSrc}
           alt={selectedItem.name}
-          className="mb-4 h-64 w-full rounded-2xl object-cover shadow-sm animate-modal-image-in"
+          loading="eager"
+          decoding="sync"
+          fetchPriority="high"
+          className="mb-4 h-64 w-full rounded-2xl object-cover shadow-sm"
           onError={(e) => {
             (e.target as HTMLImageElement).src = fallbackDishImage;
           }}
