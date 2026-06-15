@@ -15,9 +15,9 @@
         "id": "item_served_to_your_table",
         "name": "SERVED TO YOUR TABLE",
         "description": {
-          "en": "Breakfast includes all items listed below.",
-          "ru": "В завтрак входят все позиции ниже.",
-          "tr": "Kahvaltiya asagidaki tum urunler dahildir."
+          "en": "Standard breakfast includes the following items.",
+          "ru": "Стандартный завтрак включает следующие позиции.",
+          "tr": "Standart kahvaltıya aşağıdaki ürünler dahildir."
         },
         "price": 0,
         "image": "/images/dishes/menemen.jpg",
