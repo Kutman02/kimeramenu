@@ -26,19 +26,19 @@ export function MenuCard({
   return (
     <div
       onClick={() => onClick?.(item)}
-      className={`group relative flex cursor-pointer items-stretch gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-220 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md active:scale-[0.995] ${
+      className={`group relative flex cursor-pointer items-stretch gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm transition-all duration-220 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md active:scale-[0.995] ${
         isPopular ? 'ring-2 ring-yellow-200 border-yellow-300' : ''
       }`}
     >
       {/* Badge for Popular */}
       {isPopular && (
-        <div className="absolute top-3 right-3 z-10 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold">
+        <div className="absolute top-2 right-2 z-10 rounded-full bg-yellow-400 px-2 py-0.5 text-xs font-bold text-yellow-900">
           ⭐ {labels.popular[language]}
         </div>
       )}
 
       {/* Image Container */}
-      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-gray-200 sm:h-28 sm:w-28">
+      <div className="relative h-[72px] w-[72px] shrink-0 overflow-hidden rounded-xl bg-gray-200 sm:h-20 sm:w-20">
         <img
           src={imageSrc}
           alt={item.name}
@@ -62,12 +62,12 @@ export function MenuCard({
       {/* Content */}
       <div className="min-w-0 grow">
         {/* Name */}
-        <h3 className="mb-1 line-clamp-2 text-base font-bold text-slate-900 sm:text-lg">
+        <h3 className="mb-0.5 line-clamp-2 text-[15px] leading-tight font-bold text-slate-900 sm:text-base">
           {item.name}
         </h3>
 
         {/* Description */}
-        <p className="line-clamp-2 text-sm text-slate-600">
+        <p className="line-clamp-2 text-[13px] leading-snug text-slate-600 sm:text-sm">
           {description}
         </p>
       </div>
