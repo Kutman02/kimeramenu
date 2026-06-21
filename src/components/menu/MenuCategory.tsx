@@ -68,22 +68,26 @@ export function MenuCategory({
   const availableItems = category.items.filter((item) => item.available);
 
   return (
-    <section id={`cat-${category.id}`} className="mb-10 scroll-mt-24 sm:scroll-mt-28 sm:mb-12">
+    <section id={`cat-${category.id}`} className="mb-8 scroll-mt-24 sm:scroll-mt-28 sm:mb-10">
       {/* Category Header */}
-      <div className="mb-4">
-        <div className="flex items-center gap-3 mb-2">
-          {category.icon && <span className="text-4xl">{category.icon}</span>}
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+      <div className="mb-3 rounded-2xl border border-emerald-100/80 bg-linear-to-r from-white via-emerald-50/70 to-amber-50/45 p-3 shadow-[0_4px_12px_rgba(6,78,59,0.08)]">
+        <div className="mb-1.5 flex items-center gap-2.5">
+          {category.icon && (
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100/90 text-2xl ring-1 ring-emerald-200/80">
+              {category.icon}
+            </span>
+          )}
+          <h2 className="line-clamp-2 text-xl font-semibold tracking-tight text-emerald-950 sm:text-2xl">
             {category.displayName[language] || category.displayName.en}
           </h2>
         </div>
-        <p className="text-sm text-gray-500">
+        <p className="text-xs font-medium uppercase tracking-wide text-emerald-700/85 sm:text-sm">
           {getCountLabel(availableItems.length, language, category.group)}
         </p>
       </div>
 
       {/* Compact list for faster scanning */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {availableItems.map((item) => (
           <MenuCard
             key={item.id}
@@ -95,8 +99,8 @@ export function MenuCategory({
       </div>
 
       {availableItems.length === 0 && (
-        <div className="text-center py-12 bg-gray-50 rounded-xl border border-gray-100">
-          <p className="text-gray-500 text-lg">{getEmptyLabel(language, category.group)}</p>
+        <div className="rounded-2xl border border-emerald-100 bg-linear-to-br from-white to-emerald-50/60 py-10 text-center shadow-sm">
+          <p className="text-lg text-emerald-800/80">{getEmptyLabel(language, category.group)}</p>
         </div>
       )}
     </section>

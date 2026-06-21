@@ -18,7 +18,12 @@ export function MenuCategoryGroupSection({
 
   return (
     <>
-      <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">{title}</p>
+      <div className="mb-4 flex items-center gap-3">
+        <p className="shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
+          {title}
+        </p>
+        <span className="h-px w-full bg-linear-to-r from-emerald-200 via-emerald-100 to-transparent" />
+      </div>
 
       {categories.map((category) => (
         <MenuCategory

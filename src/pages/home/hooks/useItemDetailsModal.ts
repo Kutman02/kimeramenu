@@ -7,6 +7,10 @@ const DRAG_RESISTANCE = 0.85;
 const OPEN_ANIMATION_DURATION_MS = 360;
 const CLOSE_ANIMATION_DURATION_MS = 280;
 const IMAGE_WARMUP_TIMEOUT_MS = 140;
+const getViewportHeight = () => {
+  if (typeof window === 'undefined') return 720;
+  return window.visualViewport?.height ?? window.innerHeight;
+};
 const getSheetAnimationTranslate = (viewportHeight: number) =>
   Math.min(Math.max(viewportHeight * 0.68, 300), 560);
 
@@ -125,7 +129,7 @@ export function useItemDetailsModal() {
     cancelOpenAnimationTimeout();
     cancelCloseAnimation();
     cancelCloseAnimationTimeout();
-    const startTranslate = getSheetAnimationTranslate(window.innerHeight);
+    const startTranslate = getSheetAnimationTranslate(getViewportHeight());
     setIsOpeningSheet(true);
     setIsClosingSheet(false);
     setIsDraggingSheet(false);
@@ -166,7 +170,7 @@ export function useItemDetailsModal() {
       setIsClosingSheet(true);
       setIsDraggingSheet(false);
 
-      const closeTranslate = getSheetAnimationTranslate(window.innerHeight);
+      const closeTranslate = getSheetAnimationTranslate(getViewportHeight());
 
       closeAnimationFrameRef.current = window.requestAnimationFrame(() => {
         setSheetTranslateY(closeTranslate);
