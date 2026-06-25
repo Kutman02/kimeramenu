@@ -41,7 +41,7 @@ export function HeaderDrawer({
   return (
     <div
       id={menuId}
-      className={`fixed inset-y-0 left-0 z-70 flex w-[min(22rem,92vw)] flex-col border-r border-white/10 bg-linear-to-b from-slate-900 to-purple-950 text-white shadow-2xl ${
+      className={`fixed inset-y-0 left-0 z-70 flex w-[min(22rem,92vw)] flex-col border-r border-[#8ea584]/30 bg-linear-to-b from-[#313d31] via-[#2b362c] to-[#263126] text-[#eef3e8] shadow-2xl ${
         menuOpen ? '' : 'pointer-events-none'
       }`}
       aria-hidden={!menuOpen}
@@ -57,41 +57,41 @@ export function HeaderDrawer({
           : 'transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 240ms ease',
       }}
     >
-      <div className="shrink-0 border-b border-white/10 px-4 py-4">
+      <div className="shrink-0 border-b border-[#d6dfcc]/15 px-4 py-4">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-xs font-medium uppercase tracking-wider text-purple-200/80">
+          <p className="text-xs font-medium uppercase tracking-wider text-[#d6dfcc]/85">
             {drawerTitle[currentLanguage]}
           </p>
           <button
             type="button"
             aria-label="Close menu"
             onClick={onClose}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-purple-100/90 transition hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-200/80"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#dce4d2] transition hover:bg-[#d6dfcc]/10 hover:text-[#f7faf3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d6dfcc]/70"
           >
             <span aria-hidden className="text-lg leading-none">
               ×
             </span>
           </button>
         </div>
-        <p className="text-xs font-medium uppercase tracking-wider text-purple-200/80">
+        <p className="text-xs font-medium uppercase tracking-wider text-[#d6dfcc]/80">
           {swipeToCloseHint[currentLanguage]}
         </p>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">
-        <section className="border-b border-white/10 pb-5">
+        <section className="border-b border-[#d6dfcc]/15 pb-5">
           <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
             {restaurant.displayName[currentLanguage]}
           </h1>
           {restaurant.description && (
-            <p className="mt-2 text-sm leading-relaxed text-purple-100/95">
+            <p className="mt-2 text-sm leading-relaxed text-[#dbe4d1]/85">
               {restaurant.description[currentLanguage]}
             </p>
           )}
         </section>
 
-        <section className="border-b border-white/10 py-5">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-purple-200/90">
+        <section className="border-b border-[#d6dfcc]/15 py-5">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#d6dfcc]/90">
             {languageSectionTitle[currentLanguage]}
           </p>
           <div className="flex flex-col gap-2">
@@ -102,8 +102,8 @@ export function HeaderDrawer({
                 onClick={() => onLanguageChange(language)}
                 className={`w-full rounded-xl px-4 py-3 text-left text-sm font-medium transition ${
                   currentLanguage === language
-                    ? 'bg-white text-purple-900 shadow-md'
-                    : 'border border-white/10 bg-white/5 text-white hover:bg-white/10'
+                    ? 'border border-[#d4dfc8] bg-[#f2f6ec] text-[#2f3a2f] shadow-sm'
+                    : 'border border-[#d6dfcc]/20 bg-white/5 text-[#eef3e8] hover:bg-white/10'
                 }`}
               >
                 {languageLabels[language]}
@@ -113,14 +113,14 @@ export function HeaderDrawer({
         </section>
 
         <section className="pt-5">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-purple-200/90">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#d6dfcc]/90">
             {cuisineSectionTitle[currentLanguage]}
           </p>
           <ul className="space-y-2">
             {restaurant.cuisineTypes?.map((cuisineType) => (
               <li key={cuisineType}>
-                <span className="flex items-center rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white/95">
-                  <span className="mr-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/30 text-base">
+                <span className="flex items-center rounded-xl border border-[#d6dfcc]/20 bg-white/5 px-4 py-3 text-sm font-medium text-[#eef3e8]">
+                  <span className="mr-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#b7c8a8]/20 text-base text-[#dce8d0]">
                     ✦
                   </span>
                   {cuisineType}

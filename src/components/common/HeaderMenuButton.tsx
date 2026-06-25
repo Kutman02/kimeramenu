@@ -22,10 +22,10 @@ export function HeaderMenuButton({
   return (
     <button
       type="button"
-      className={`pointer-events-auto group relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500/60 sm:h-11 sm:w-11 ${
+      className={`pointer-events-auto relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8ca884]/70 sm:h-11 sm:w-11 ${
         menuOpen
-          ? 'border-emerald-800 bg-linear-to-br from-emerald-900 via-emerald-800 to-emerald-700 text-emerald-50 shadow-[0_10px_24px_rgba(6,78,59,0.35)]'
-          : 'border-emerald-200/90 bg-linear-to-b from-white to-emerald-50/70 text-emerald-800 shadow-[0_6px_16px_rgba(5,150,105,0.14)] hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-[0_10px_20px_rgba(5,150,105,0.2)]'
+          ? 'border-[#5f745a] bg-[#5a7056] text-[#f6f9f1] shadow-[0_4px_10px_rgba(33,49,31,0.22)]'
+          : 'border-[#d8dfcd] bg-[#f5f8f0] text-[#486246] shadow-sm hover:border-[#cdd7be] hover:bg-[#edf3e4]'
       }`}
       aria-expanded={menuOpen}
       aria-controls={menuId}
@@ -52,10 +52,10 @@ export function HeaderMenuButton({
       </span>
       <span
         aria-hidden
-        className={`pointer-events-none absolute -right-0.5 -top-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border bg-white/95 text-[11px] leading-none shadow-[0_2px_8px_rgba(15,23,42,0.25)] ring-1 ${
+        className={`pointer-events-none absolute -right-0.5 -top-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border bg-[#f7faf2] text-[11px] leading-none shadow-[0_2px_6px_rgba(33,49,31,0.18)] ring-1 ${
           menuOpen
-            ? 'border-white/90 ring-emerald-500/45'
-            : 'border-emerald-200 ring-emerald-300/80'
+            ? 'border-[#e3e9d8] ring-[#d7e0cb]'
+            : 'border-[#d8dfcd] ring-[#e7eedb]'
         }`}
       >
         {languageFlags[currentLanguage]}
