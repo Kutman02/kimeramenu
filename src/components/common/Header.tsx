@@ -31,7 +31,12 @@ export function Header({ restaurant, currentLanguage, onLanguageChange }: Header
     <>
       <header className="pointer-events-none sticky top-0 z-50 bg-transparent">
         <div className="mx-auto flex max-w-7xl justify-start px-3 py-3 sm:px-5 sm:py-4">
-          <HeaderMenuButton menuOpen={menuOpen} menuId={menuId} onToggle={toggleMenu} />
+          <HeaderMenuButton
+            currentLanguage={currentLanguage}
+            menuOpen={menuOpen}
+            menuId={menuId}
+            onToggle={toggleMenu}
+          />
         </div>
       </header>
 

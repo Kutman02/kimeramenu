@@ -2,10 +2,16 @@ import type { Language } from '../../types/menu';
 
 export const LANGUAGE_OPTIONS: Language[] = ['en', 'ru', 'tr'];
 
+export const languageFlags: Record<Language, string> = {
+  en: '🇬🇧',
+  ru: '🇷🇺',
+  tr: '🇹🇷',
+};
+
 export const languageLabels: Record<Language, string> = {
-  en: '🇬🇧 English',
-  ru: '🇷🇺 Русский',
-  tr: '🇹🇷 Türkçe',
+  en: `${languageFlags.en} English`,
+  ru: `${languageFlags.ru} Русский`,
+  tr: `${languageFlags.tr} Türkçe`,
 };
 
 export const cuisineSectionTitle: Record<Language, string> = {
