@@ -118,17 +118,19 @@ export function ItemDetailsModal({
           </button>
         </div>
 
-        <img
-          src={imageSrc}
-          alt={selectedItem.name}
-          loading="eager"
-          decoding="sync"
-          fetchPriority="high"
-          className="mb-3 h-56 w-full rounded-2xl border border-emerald-200/80 object-cover shadow-[0_10px_24px_rgba(2,44,34,0.14)] sm:h-64"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = fallbackDishImage;
-          }}
-        />
+        <div className="mx-auto mb-3 w-full max-w-md overflow-hidden rounded-2xl border border-emerald-200/80 bg-emerald-50/40 shadow-[0_10px_24px_rgba(2,44,34,0.14)]">
+          <img
+            src={imageSrc}
+            alt={selectedItem.name}
+            loading="eager"
+            decoding="sync"
+            fetchPriority="high"
+            className="aspect-square w-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = fallbackDishImage;
+            }}
+          />
+        </div>
 
         <p className="mb-3 rounded-2xl border border-emerald-100/90 bg-white/75 p-3 text-slate-700 shadow-sm backdrop-blur-sm sm:p-4">
           {selectedItem.description[currentLanguage] || selectedItem.description.en}
