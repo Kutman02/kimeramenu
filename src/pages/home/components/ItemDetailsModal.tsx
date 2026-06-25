@@ -41,19 +41,19 @@ export function ItemDetailsModal({
 
   const imageSrc = selectedItem.image?.trim() ? selectedItem.image : fallbackDishImage;
   const maxBackdropOpacity = 0.35;
-  const maxOpenTranslate = 560;
+  const maxOpenTranslate = 460;
   const normalizedTranslate = Math.min(Math.max(sheetTranslateY / maxOpenTranslate, 0), 1);
   const openProgress = 1 - normalizedTranslate;
-  const openingBackdropProgress = Math.pow(openProgress, 1.8);
+  const openingBackdropProgress = Math.pow(openProgress, 1.5);
   const closingBackdropProgress = Math.pow(openProgress, 1.2);
   const staticBackdropProgress = Math.max(openProgress, 0.88);
   const sheetOpacity = isDraggingSheet
-    ? Math.max(0.84, 1 - sheetTranslateY / 450)
+    ? Math.max(0.9, 1 - sheetTranslateY / 650)
     : isClosingSheet
-      ? Math.max(0.78, 1 - sheetTranslateY / 420)
-    : Math.max(0.94, 1 - sheetTranslateY / 900);
+      ? Math.max(0.86, 1 - sheetTranslateY / 520)
+    : Math.max(0.96, 1 - sheetTranslateY / 1200);
   const backdropOpacity = isDraggingSheet
-    ? Math.max(0.2, maxBackdropOpacity - sheetTranslateY / 700)
+    ? Math.max(0.14, maxBackdropOpacity - sheetTranslateY / 850)
     : maxBackdropOpacity *
       (isOpeningSheet
         ? openingBackdropProgress
@@ -67,18 +67,19 @@ export function ItemDetailsModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center backdrop-blur-[2px] sm:items-center"
       style={{
         backgroundColor: `rgba(4, 36, 29, ${backdropOpacity})`,
         paddingTop: modalTopInset,
         paddingBottom: modalBottomInset,
+        willChange: isDraggingSheet || isOpeningSheet || isClosingSheet ? 'background-color' : undefined,
         transition: isDraggingSheet
           ? 'none'
           : isOpeningSheet
-            ? 'background-color 360ms cubic-bezier(0.22, 1, 0.36, 1) 55ms'
+            ? 'background-color 260ms cubic-bezier(0.2, 0.9, 0.2, 1)'
             : isClosingSheet
-              ? 'background-color 240ms ease-in'
-            : 'background-color 240ms ease-out',
+              ? 'background-color 190ms cubic-bezier(0.4, 0, 1, 1)'
+            : 'background-color 180ms ease-out',
       }}
     >
       <div
@@ -88,12 +89,16 @@ export function ItemDetailsModal({
         onTouchEnd={onTouchEnd}
         onTouchCancel={onTouchEnd}
         style={{
-          transform: `translateY(${sheetTranslateY}px)`,
+          transform: `translate3d(0, ${sheetTranslateY}px, 0)`,
           opacity: sheetOpacity,
           maxHeight: modalMaxHeight,
+          backfaceVisibility: 'hidden',
+          willChange: isDraggingSheet || isOpeningSheet || isClosingSheet ? 'transform, opacity' : undefined,
           transition: isDraggingSheet || isPreparingOpenPosition
             ? 'none'
-            : 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms cubic-bezier(0.22, 1, 0.36, 1)',
+            : isClosingSheet
+              ? 'transform 220ms cubic-bezier(0.4, 0, 1, 1), opacity 200ms ease-out'
+            : 'transform 260ms cubic-bezier(0.2, 0.9, 0.3, 1), opacity 220ms ease-out',
         }}
         className="relative h-[96vh] w-screen overflow-y-auto overscroll-contain rounded-t-3xl border border-emerald-200/80 bg-linear-to-b from-white via-emerald-50/65 to-amber-50/40 p-3 shadow-[0_22px_60px_rgba(2,44,34,0.30)] sm:h-[92vh] sm:max-w-3xl sm:rounded-3xl sm:p-6"
       >
@@ -123,7 +128,7 @@ export function ItemDetailsModal({
             src={imageSrc}
             alt={selectedItem.name}
             loading="eager"
-            decoding="sync"
+            decoding="async"
             fetchPriority="high"
             className="aspect-square w-full object-cover"
             onError={(e) => {
@@ -142,19 +147,23 @@ export function ItemDetailsModal({
               {HOME_PAGE_TEXT.includedItemsTitle[currentLanguage]}
             </h3>
             <div className="space-y-2.5">
-              {relatedItems.map((relatedItem, index) => (
-                <div
-                  key={relatedItem.id}
-                  className="animate-soft-rise-in rounded-2xl bg-emerald-100/40 p-1.5"
-                  style={{ animationDelay: `${Math.min(index * 45, 220)}ms` }}
-                >
-                  <MenuCard
-                    item={relatedItem}
-                    language={currentLanguage}
-                    onClick={onRelatedItemClick}
-                  />
-                </div>
-              ))}
+              {relatedItems.map((relatedItem, index) => {
+                const shouldAnimate = index < 4;
+
+                return (
+                  <div
+                    key={relatedItem.id}
+                    className={`${shouldAnimate ? 'animate-soft-rise-in' : ''} rounded-2xl bg-emerald-100/40 p-1.5`}
+                    style={shouldAnimate ? { animationDelay: `${Math.min(index * 36, 144)}ms` } : undefined}
+                  >
+                    <MenuCard
+                      item={relatedItem}
+                      language={currentLanguage}
+                      onClick={onRelatedItemClick}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}

@@ -4,15 +4,14 @@ import type { MenuItem } from '../../../types/menu';
 const DRAG_CLOSE_THRESHOLD = 150;
 const DRAG_MAX_TRANSLATE = 260;
 const DRAG_RESISTANCE = 0.85;
-const OPEN_ANIMATION_DURATION_MS = 360;
-const CLOSE_ANIMATION_DURATION_MS = 280;
-const IMAGE_WARMUP_TIMEOUT_MS = 140;
+const OPEN_ANIMATION_DURATION_MS = 280;
+const CLOSE_ANIMATION_DURATION_MS = 220;
 const getViewportHeight = () => {
   if (typeof window === 'undefined') return 720;
   return window.visualViewport?.height ?? window.innerHeight;
 };
 const getSheetAnimationTranslate = (viewportHeight: number) =>
-  Math.min(Math.max(viewportHeight * 0.68, 300), 560);
+  Math.min(Math.max(viewportHeight * 0.56, 260), 460);
 
 export function useItemDetailsModal() {
   const [itemStack, setItemStack] = useState<MenuItem[]>([]);
@@ -29,7 +28,6 @@ export function useItemDetailsModal() {
   const closeAnimationFrameRef = useRef<number | null>(null);
   const closeAnimationTimeoutRef = useRef<number | null>(null);
   const imageCacheRef = useRef(new Set<string>());
-  const openRequestIdRef = useRef(0);
 
   const selectedItem = itemStack[itemStack.length - 1] ?? null;
 
@@ -102,22 +100,6 @@ export function useItemDetailsModal() {
       }
     });
   }, []);
-
-  const warmImageBeforeOpen = useCallback(
-    (src?: string) => {
-      const normalizedSrc = src?.trim() ?? '';
-      if (!normalizedSrc || typeof window === 'undefined') return Promise.resolve();
-      if (imageCacheRef.current.has(normalizedSrc)) return Promise.resolve();
-
-      return Promise.race([
-        preloadImage(normalizedSrc),
-        new Promise<void>((resolve) => {
-          window.setTimeout(resolve, IMAGE_WARMUP_TIMEOUT_MS);
-        }),
-      ]);
-    },
-    [preloadImage]
-  );
 
   const startOpenFromBottomAnimation = useCallback(() => {
     if (typeof window === 'undefined') {
@@ -193,48 +175,33 @@ export function useItemDetailsModal() {
 
   const openItemDetails = useCallback(
     (item: MenuItem) => {
-      const requestId = ++openRequestIdRef.current;
-
-      const commitOpen = () => {
-        if (openRequestIdRef.current !== requestId) return;
-
-        startOpenFromBottomAnimation();
-        setItemStack([item]);
-      };
-
-      void warmImageBeforeOpen(item.image).then(commitOpen);
+      startOpenFromBottomAnimation();
+      setItemStack([item]);
+      void preloadImage(item.image);
     },
-    [startOpenFromBottomAnimation, warmImageBeforeOpen]
+    [preloadImage, startOpenFromBottomAnimation]
   );
 
   const openRelatedItemDetails = useCallback(
     (item: MenuItem) => {
       if (selectedItem?.id === item.id) return;
 
-      const requestId = ++openRequestIdRef.current;
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTop = 0;
+      }
 
-      const commitOpen = () => {
-        if (openRequestIdRef.current !== requestId) return;
-
-        if (modalBodyRef.current) {
-          modalBodyRef.current.scrollTop = 0;
-        }
-
-        startOpenFromBottomAnimation();
-        setItemStack((prev) => {
-          if (!prev.length) return [item];
-          return [...prev, item];
-        });
-      };
-
-      void warmImageBeforeOpen(item.image).then(commitOpen);
+      startOpenFromBottomAnimation();
+      setItemStack((prev) => {
+        if (!prev.length) return [item];
+        return [...prev, item];
+      });
+      void preloadImage(item.image);
     },
-    [selectedItem, startOpenFromBottomAnimation, warmImageBeforeOpen]
+    [preloadImage, selectedItem, startOpenFromBottomAnimation]
   );
 
   const closeItemDetails = useCallback(() => {
     if (!selectedItem || isClosingSheet) return;
-    openRequestIdRef.current += 1;
 
     startCloseToBottomAnimation(() => {
       setItemStack((prev) => (prev.length > 1 ? prev.slice(0, -1) : []));
