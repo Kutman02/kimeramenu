@@ -10,10 +10,10 @@ export function HeaderBackdrop({ menuOpen, backdropOpacity, onClose }: HeaderBac
   return (
     <button
       type="button"
-      className="fixed inset-0 z-60 backdrop-blur-[1px] transition-colors"
+      className="fixed inset-0 z-60 backdrop-blur-sm transition-colors"
       aria-label="Close menu"
       onClick={onClose}
-      style={{ backgroundColor: `rgba(15, 23, 42, ${backdropOpacity})` }}
+      style={{ backgroundColor: `rgba(4, 36, 29, ${backdropOpacity})` }}
     />
   );
 }

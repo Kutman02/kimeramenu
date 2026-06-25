@@ -95,11 +95,11 @@ export function useHeaderDrawer() {
     };
   }, [closeMenu, menuOpen]);
 
-  const drawerOpacity = isDraggingDrawer ? Math.max(0.82, 1 - drawerTranslateX / 420) : 1;
+  const drawerOpacity = isDraggingDrawer ? Math.max(0.84, 1 - drawerTranslateX / 520) : 1;
   const backdropOpacity = menuOpen
     ? isDraggingDrawer
-      ? Math.max(0.01, 0.06 - drawerTranslateX / 1000)
-      : 0.06
+      ? Math.max(0.14, 0.32 - drawerTranslateX / 900)
+      : 0.32
     : 0;
 
   return {

@@ -76,6 +76,113 @@ export const toSafeNumber = (value: unknown, fallback = 0) => {
 export const normalizeStringList = (value?: string[]) =>
   (value ?? []).map((entry) => normalizeText(entry)).filter(Boolean);
 
+export interface SquareCropControls {
+  zoom: number;
+  offsetX: number;
+  offsetY: number;
+}
+
+export const DEFAULT_SQUARE_IMAGE_SIZE = 1024;
+
+export const DEFAULT_SQUARE_CROP_CONTROLS: SquareCropControls = {
+  zoom: 1,
+  offsetX: 0,
+  offsetY: 0,
+};
+
+export const clampSquareImageSize = (value: number) => {
+  if (!Number.isFinite(value)) return DEFAULT_SQUARE_IMAGE_SIZE;
+  return Math.min(1536, Math.max(256, Math.round(value)));
+};
+
+export const clampSquareCropControls = (controls: SquareCropControls): SquareCropControls => ({
+  zoom: Math.min(3, Math.max(1, Number.isFinite(controls.zoom) ? controls.zoom : 1)),
+  offsetX: Math.min(1, Math.max(-1, Number.isFinite(controls.offsetX) ? controls.offsetX : 0)),
+  offsetY: Math.min(1, Math.max(-1, Number.isFinite(controls.offsetY) ? controls.offsetY : 0)),
+});
+
+export const loadImageFromFile = (file: File) =>
+  new Promise<HTMLImageElement>((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(image);
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Файл изображения не удалось открыть.'));
+    };
+
+    image.src = objectUrl;
+  });
+
+interface DrawSquareCropToCanvasOptions {
+  context: CanvasRenderingContext2D;
+  image: HTMLImageElement;
+  size: number;
+  controls: SquareCropControls;
+}
+
+export const drawSquareCropToCanvas = ({
+  context,
+  image,
+  size,
+  controls,
+}: DrawSquareCropToCanvasOptions) => {
+  const safeSize = clampSquareImageSize(size);
+  const safeControls = clampSquareCropControls(controls);
+  const sourceWidth = image.naturalWidth || image.width;
+  const sourceHeight = image.naturalHeight || image.height;
+
+  if (!sourceWidth || !sourceHeight) {
+    throw new Error('Изображение пустое или повреждено.');
+  }
+
+  const coverScale = Math.max(safeSize / sourceWidth, safeSize / sourceHeight);
+  const zoomScale = coverScale * safeControls.zoom;
+  const drawWidth = sourceWidth * zoomScale;
+  const drawHeight = sourceHeight * zoomScale;
+  const maxOffsetX = Math.max(0, (drawWidth - safeSize) / 2);
+  const maxOffsetY = Math.max(0, (drawHeight - safeSize) / 2);
+  const drawX = (safeSize - drawWidth) / 2 - safeControls.offsetX * maxOffsetX;
+  const drawY = (safeSize - drawHeight) / 2 - safeControls.offsetY * maxOffsetY;
+
+  context.clearRect(0, 0, safeSize, safeSize);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
+  context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+};
+
+interface CreateSquareImageDataUrlOptions {
+  image: HTMLImageElement;
+  size: number;
+  controls: SquareCropControls;
+}
+
+export const createSquareImageDataUrl = ({ image, size, controls }: CreateSquareImageDataUrlOptions) => {
+  const safeSize = clampSquareImageSize(size);
+  const canvas = document.createElement('canvas');
+  canvas.width = safeSize;
+  canvas.height = safeSize;
+
+  const context = canvas.getContext('2d');
+  if (!context) {
+    throw new Error('Браузер не поддерживает canvas для обработки изображения.');
+  }
+
+  drawSquareCropToCanvas({ context, image, size: safeSize, controls });
+
+  const webpImage = canvas.toDataURL('image/webp', 0.92);
+  if (webpImage.startsWith('data:image/webp')) {
+    return webpImage;
+  }
+
+  return canvas.toDataURL('image/jpeg', 0.92);
+};
+
 export const prepareMenuItem = (item: MenuItem): MenuItem => ({
   ...item,
   id: normalizeText(item.id) || `item_${Date.now()}`,

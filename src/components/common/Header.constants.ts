@@ -39,5 +39,5 @@ export const swipeToCloseHint: Record<Language, string> = {
 };
 
 export const DRAWER_CLOSE_THRESHOLD = 90;
-export const DRAWER_MAX_TRANSLATE = 220;
-export const DRAWER_DRAG_RESISTANCE = 0.9;
+export const DRAWER_MAX_TRANSLATE = 260;
+export const DRAWER_DRAG_RESISTANCE = 0.95;

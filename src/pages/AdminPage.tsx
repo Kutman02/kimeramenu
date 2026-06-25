@@ -1,4 +1,4 @@
-import { useMemo, useState, type ChangeEvent } from 'react';
+import { useMemo, useState } from 'react';
 import dataService from '../services/dataService';
 import type { Language, MenuCategory, MenuData, MenuItem } from '../types/menu';
 import { AdminCategoriesSection } from './admin/components/AdminCategoriesSection';
@@ -13,15 +13,19 @@ import { ItemEditorModal } from './admin/components/ItemEditorModal';
 import { ADMIN_SECTIONS, ALL_CATEGORIES_VALUE, ALL_LANGUAGES } from './admin/constants';
 import type { AdminSectionId, CategoryEditorState, ItemEditorState, ItemListEntry } from './admin/types';
 import {
+  clampSquareImageSize,
   clone,
+  createSquareImageDataUrl,
   createCategory,
   createMenuItem,
   exportData,
   getCategoryLabel,
   getItemDescription,
+  loadImageFromFile,
   normalizeText,
   prepareCategory,
   prepareMenuItem,
+  type SquareCropControls,
 } from './admin/utils';
 
 export function AdminPage() {
@@ -422,19 +426,41 @@ export function AdminPage() {
     setStatus('Товар удалён.');
   };
 
-  const handleUploadImage = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !itemEditor) return;
+  const handleUploadImage = async ({
+    file,
+    squareSize,
+    controls,
+  }: {
+    file: File;
+    squareSize: number;
+    controls: SquareCropControls;
+  }) => {
+    if (!itemEditor) return;
+    if (!file.type.startsWith('image/')) {
+      setStatus('Выберите корректный файл изображения.');
+      return;
+    }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result !== 'string') return;
-      patchItemDraft({ image: reader.result });
-      setStatus('Изображение добавлено в форму товара.');
-    };
+    const targetSize = clampSquareImageSize(squareSize);
+    setStatus(`Подготавливаем квадратный кадр ${targetSize}x${targetSize}...`);
 
-    reader.readAsDataURL(file);
-    e.currentTarget.value = '';
+    try {
+      const image = await loadImageFromFile(file);
+      const dataUrl = createSquareImageDataUrl({
+        image,
+        size: targetSize,
+        controls,
+      });
+      patchItemDraft({ image: dataUrl });
+      setStatus(`Кадр применён и сохранён как квадрат ${targetSize}x${targetSize}.`);
+    } catch (error) {
+      setStatus(
+        error instanceof Error
+          ? `Не удалось обработать изображение: ${error.message}`
+          : 'Не удалось обработать изображение.'
+      );
+      throw error;
+    }
   };
 
   const handleSave = async () => {
