@@ -5,7 +5,14 @@ const SCROLL_TO_CATEGORY_OFFSET = 108;
 const SECTION_ACTIVATION_OFFSET = 120;
 const OBSERVER_SUPPRESS_MS = 900;
 
-export function useCategoryNavigation(filteredCategories: MenuCategory[]) {
+interface UseCategoryNavigationOptions {
+  scrollBehavior?: ScrollBehavior;
+}
+
+export function useCategoryNavigation(
+  filteredCategories: MenuCategory[],
+  { scrollBehavior = 'smooth' }: UseCategoryNavigationOptions = {}
+) {
   const [activeCategoryId, setActiveCategoryId] = useState('');
   const categoryTabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const categoryTabsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -24,50 +31,79 @@ export function useCategoryNavigation(filteredCategories: MenuCategory[]) {
   useEffect(() => {
     if (!filteredCategories.length) return;
 
-    let rafId: number | null = null;
+    let scrollRafId: number | null = null;
+    let layoutRafId: number | null = null;
+    let sectionPositions: Array<{ id: string; top: number }> = [];
+
+    const collectSectionPositions = () => {
+      sectionPositions = filteredCategories
+        .map((category) => {
+          const sectionEl = document.getElementById(`cat-${category.id}`);
+          if (!sectionEl) return null;
+
+          return {
+            id: category.id,
+            top: sectionEl.getBoundingClientRect().top + window.scrollY,
+          };
+        })
+        .filter((section): section is { id: string; top: number } => section !== null);
+    };
 
     const updateActiveCategoryFromScroll = () => {
       if (Date.now() < suppressObserverUntilRef.current) return;
 
-      let nextActiveId = filteredCategories[0]?.id ?? '';
+      if (!sectionPositions.length) return;
 
-      for (const category of filteredCategories) {
-        const sectionEl = document.getElementById(`cat-${category.id}`);
-        if (!sectionEl) continue;
+      const threshold = window.scrollY + SECTION_ACTIVATION_OFFSET;
+      let nextActiveId = sectionPositions[0].id;
 
-        const top = sectionEl.getBoundingClientRect().top;
-        if (top - SECTION_ACTIVATION_OFFSET <= 0) {
-          nextActiveId = category.id;
-        } else {
-          break;
+      for (let index = 1; index < sectionPositions.length; index += 1) {
+        const sectionPosition = sectionPositions[index];
+        if (sectionPosition.top <= threshold) {
+          nextActiveId = sectionPosition.id;
+          continue;
         }
+        break;
       }
 
       setActiveCategoryId((prev) => (prev === nextActiveId ? prev : nextActiveId));
     };
 
-    const onScroll = () => {
-      if (rafId !== null) return;
-      rafId = window.requestAnimationFrame(() => {
-        rafId = null;
+    const scheduleScrollUpdate = () => {
+      if (scrollRafId !== null) return;
+      scrollRafId = window.requestAnimationFrame(() => {
+        scrollRafId = null;
         updateActiveCategoryFromScroll();
       });
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    const scheduleLayoutRecalculation = () => {
+      if (layoutRafId !== null) return;
 
-    rafId = window.requestAnimationFrame(() => {
-      rafId = null;
-      updateActiveCategoryFromScroll();
-    });
+      layoutRafId = window.requestAnimationFrame(() => {
+        layoutRafId = null;
+        collectSectionPositions();
+        updateActiveCategoryFromScroll();
+      });
+    };
+
+    window.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
+    window.addEventListener('resize', scheduleLayoutRecalculation);
+    window.addEventListener('orientationchange', scheduleLayoutRecalculation);
+    scheduleLayoutRecalculation();
 
     return () => {
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
+      if (scrollRafId !== null) {
+        window.cancelAnimationFrame(scrollRafId);
       }
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+
+      if (layoutRafId !== null) {
+        window.cancelAnimationFrame(layoutRafId);
+      }
+
+      window.removeEventListener('scroll', scheduleScrollUpdate);
+      window.removeEventListener('resize', scheduleLayoutRecalculation);
+      window.removeEventListener('orientationchange', scheduleLayoutRecalculation);
     };
   }, [filteredCategories]);
 
@@ -81,20 +117,23 @@ export function useCategoryNavigation(filteredCategories: MenuCategory[]) {
     const targetLeft = activeTab.offsetLeft - container.clientWidth / 2 + activeTab.clientWidth / 2;
     container.scrollTo({
       left: Math.max(0, targetLeft),
-      behavior: 'smooth',
+      behavior: scrollBehavior,
     });
-  }, [currentActiveCategoryId]);
+  }, [currentActiveCategoryId, scrollBehavior]);
 
-  const scrollToCategory = useCallback((categoryId: string) => {
-    const element = document.getElementById(`cat-${categoryId}`);
-    if (!element) return;
+  const scrollToCategory = useCallback(
+    (categoryId: string) => {
+      const element = document.getElementById(`cat-${categoryId}`);
+      if (!element) return;
 
-    const y = element.getBoundingClientRect().top + window.scrollY - SCROLL_TO_CATEGORY_OFFSET;
-    window.scrollTo({
-      top: Math.max(0, y),
-      behavior: 'smooth',
-    });
-  }, []);
+      const y = element.getBoundingClientRect().top + window.scrollY - SCROLL_TO_CATEGORY_OFFSET;
+      window.scrollTo({
+        top: Math.max(0, y),
+        behavior: scrollBehavior,
+      });
+    },
+    [scrollBehavior]
+  );
 
   const onCategorySelect = useCallback(
     (categoryId: string) => {

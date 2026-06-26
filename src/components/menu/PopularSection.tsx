@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { MenuCard } from './MenuCard';
 import type { MenuItem, Language } from '../../types/menu';
 
@@ -7,7 +8,7 @@ export interface PopularSectionProps {
   onItemClick?: (item: MenuItem) => void;
 }
 
-export function PopularSection({
+export const PopularSection = memo(function PopularSection({
   items,
   language,
   onItemClick,
@@ -54,4 +55,6 @@ export function PopularSection({
       </div>
     </section>
   );
-}
+});
+
+PopularSection.displayName = 'PopularSection';

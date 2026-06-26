@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { MenuCard } from '../../../components/menu/MenuCard';
 import { HOME_PAGE_TEXT } from '../constants/homePageText';
 import type { Language, MenuItem } from '../../../types/menu';
@@ -8,7 +9,11 @@ interface ServedToTableSectionProps {
   onItemClick: (item: MenuItem) => void;
 }
 
-export function ServedToTableSection({ items, language, onItemClick }: ServedToTableSectionProps) {
+export const ServedToTableSection = memo(function ServedToTableSection({
+  items,
+  language,
+  onItemClick,
+}: ServedToTableSectionProps) {
   if (!items.length) return null;
 
   return (
@@ -24,4 +29,6 @@ export function ServedToTableSection({ items, language, onItemClick }: ServedToT
       </div>
     </section>
   );
-}
+});
+
+ServedToTableSection.displayName = 'ServedToTableSection';

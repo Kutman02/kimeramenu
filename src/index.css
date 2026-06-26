@@ -5,6 +5,11 @@ html {
   scroll-behavior: smooth;
 }
 
+html.perf-mode-lite,
+html.reduce-motion {
+  scroll-behavior: auto;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -135,6 +140,33 @@ body {
   animation: softRiseIn 0.32s ease-out both;
 }
 
+html.perf-mode-lite [class*='backdrop-blur'] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html.perf-mode-lite [class*='shadow'] {
+  box-shadow: none !important;
+}
+
+html.perf-mode-lite [class*='transition'],
+html.reduce-motion [class*='transition'] {
+  transition-duration: 0ms !important;
+}
+
+html.perf-mode-lite .animate-fade-in,
+html.perf-mode-lite .animate-slide-in-up,
+html.perf-mode-lite .animate-handle-breathe,
+html.perf-mode-lite .animate-modal-image-in,
+html.perf-mode-lite .animate-soft-rise-in,
+html.reduce-motion .animate-fade-in,
+html.reduce-motion .animate-slide-in-up,
+html.reduce-motion .animate-handle-breathe,
+html.reduce-motion .animate-modal-image-in,
+html.reduce-motion .animate-soft-rise-in {
+  animation: none !important;
+}
+
 /* Utility Classes */
 .text-shadow {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
@@ -160,5 +192,11 @@ body {
 
   h3 {
     font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }

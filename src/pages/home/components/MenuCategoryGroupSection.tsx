@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { MenuCategory } from '../../../components/menu/MenuCategory';
 import type { Language, MenuCategory as MenuCategoryType, MenuItem } from '../../../types/menu';
 
@@ -8,7 +9,7 @@ interface MenuCategoryGroupSectionProps {
   onItemClick: (item: MenuItem) => void;
 }
 
-export function MenuCategoryGroupSection({
+export const MenuCategoryGroupSection = memo(function MenuCategoryGroupSection({
   title,
   categories,
   language,
@@ -35,4 +36,6 @@ export function MenuCategoryGroupSection({
       ))}
     </>
   );
-}
+});
+
+MenuCategoryGroupSection.displayName = 'MenuCategoryGroupSection';

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { MutableRefObject } from 'react';
 import type { Language, MenuCategory } from '../../../types/menu';
 
@@ -18,7 +19,7 @@ const getCategoryTabLabel = (category: MenuCategory, currentLanguage: Language) 
   return category.displayName[currentLanguage] || category.displayName.en;
 };
 
-export function CategoryTabs({
+export const CategoryTabs = memo(function CategoryTabs({
   categories,
   currentLanguage,
   activeCategoryId,
@@ -57,4 +58,6 @@ export function CategoryTabs({
       </div>
     </section>
   );
-}
+});
+
+CategoryTabs.displayName = 'CategoryTabs';

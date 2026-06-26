@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import { MenuCard } from './MenuCard';
 import type { MenuCategory as MenuCategoryType, MenuItem, Language } from '../../types/menu';
 
@@ -59,16 +60,19 @@ const getEmptyLabel = (language: Language, group?: MenuCategoryType['group']) =>
     : 'Bu kategoride su an urun yok';
 };
 
-export function MenuCategory({
+export const MenuCategory = memo(function MenuCategory({
   category,
   language,
   onItemClick,
 }: MenuCategoryProps) {
-  // Filter available items
-  const availableItems = category.items.filter((item) => item.available);
+  const availableItems = useMemo(() => category.items.filter((item) => item.available), [category.items]);
 
   return (
-    <section id={`cat-${category.id}`} className="mb-8 scroll-mt-24 sm:scroll-mt-28 sm:mb-10">
+    <section
+      id={`cat-${category.id}`}
+      className="mb-8 scroll-mt-24 sm:scroll-mt-28 sm:mb-10"
+      style={{ contentVisibility: 'auto' }}
+    >
       {/* Category Header */}
       <div className="mb-3 rounded-2xl border border-emerald-100/80 bg-linear-to-r from-white via-emerald-50/70 to-amber-50/45 p-3 shadow-[0_4px_12px_rgba(6,78,59,0.08)]">
         <div className="mb-1.5 flex items-center gap-2.5">
@@ -105,4 +109,6 @@ export function MenuCategory({
       )}
     </section>
   );
-}
+});
+
+MenuCategory.displayName = 'MenuCategory';

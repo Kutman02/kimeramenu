@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { MenuItem, Language } from '../../types/menu';
 import fallbackDishImage from '../../assets/zag.png';
 
@@ -10,7 +11,7 @@ export interface MenuCardProps {
   isPopular?: boolean;
 }
 
-export function MenuCard({
+export const MenuCard = memo(function MenuCard({
   item,
   language,
   onClick,
@@ -42,6 +43,10 @@ export function MenuCard({
         <img
           src={imageSrc}
           alt={item.name}
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
+          draggable={false}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           onError={(e) => {
             (e.target as HTMLImageElement).src = FALLBACK_MENU_IMAGE;
@@ -73,4 +78,6 @@ export function MenuCard({
       </div>
     </div>
   );
-}
+});
+
+MenuCard.displayName = 'MenuCard';

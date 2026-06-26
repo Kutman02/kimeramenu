@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { dataService } from '../../services/dataService';
 import type { RestaurantConfig } from '../../types/menu';
 
 type RestaurantLoadResult = {
@@ -7,7 +6,8 @@ type RestaurantLoadResult = {
   error: string | null;
 };
 
-function resolveRestaurant(restaurantId: string): RestaurantLoadResult {
+async function resolveRestaurant(restaurantId: string): Promise<RestaurantLoadResult> {
+  const { dataService } = await import('../../services/dataService');
   const requestedRestaurant = dataService.getRestaurant(restaurantId);
   const fallbackRestaurant = dataService.getAllRestaurants()[0] ?? null;
   const nextRestaurant = requestedRestaurant ?? fallbackRestaurant;
@@ -43,9 +43,9 @@ export function useRestaurant(restaurantId: string) {
   useEffect(() => {
     let isActive = true;
 
-    const loadTimer = setTimeout(() => {
+    const loadRestaurant = async () => {
       try {
-        const result = resolveRestaurant(restaurantId);
+        const result = await resolveRestaurant(restaurantId);
 
         if (isActive) {
           setRestaurant(result.restaurant);
@@ -62,11 +62,12 @@ export function useRestaurant(restaurantId: string) {
           setIsLoading(false);
         }
       }
-    }, 0);
+    };
+
+    void loadRestaurant();
 
     return () => {
       isActive = false;
-      clearTimeout(loadTimer);
     };
   }, [restaurantId]);
 

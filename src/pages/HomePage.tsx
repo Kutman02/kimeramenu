@@ -1,5 +1,5 @@
 import { Header } from '../components/common/Header';
-import { useRestaurant } from '../hooks/useMenuData';
+import { useRestaurant } from '../hooks/menuData/useRestaurant';
 import { CategoryTabs } from './home/components/CategoryTabs';
 import { HomeFooter } from './home/components/HomeFooter';
 import { HomePageSkeleton } from './home/components/HomePageSkeleton';
@@ -15,10 +15,12 @@ import { useHomeMenuSections } from './home/hooks/useHomeMenuSections';
 import { useItemDetailsModal } from './home/hooks/useItemDetailsModal';
 import { usePreferredLanguage } from './home/hooks/usePreferredLanguage';
 import { useRelatedItemsForSelected } from './home/hooks/useRelatedItemsForSelected';
+import { usePerformanceMode } from '../hooks/usePerformanceMode';
 
 const RESTAURANT_ID = 'breakfast_place';
 
 export function HomePage() {
+  const { scrollBehavior } = usePerformanceMode();
   const { currentLanguage, setCurrentLanguage, hasSelectedLanguage, selectLanguage } =
     usePreferredLanguage();
   const { restaurant, isLoading: isRestaurantLoading, error: restaurantError } =
@@ -39,7 +41,7 @@ export function HomePage() {
     categoryTabRefs,
     categoryTabsContainerRef,
     onCategorySelect,
-  } = useCategoryNavigation(navigationCategories);
+  } = useCategoryNavigation(navigationCategories, { scrollBehavior });
 
   const {
     selectedItem,
